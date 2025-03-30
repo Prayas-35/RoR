@@ -11,7 +11,7 @@ import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { redirect } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
@@ -144,7 +144,7 @@ export default function GladiatorOnboarding() {
         abi: gladiatorAbi,
         address: gladiatorAddress,
         functionName: "mintGladiator",
-        args: [mintURI],
+        args: [ipfsUrl],
       });
       console.log("Minting transaction:", tx);
       if (tx) {
