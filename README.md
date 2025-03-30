@@ -1,7 +1,7 @@
 # Ruins of Rome
 
 Deployed on B3 Testnet:
-Addresses 0x632bE79998304372074F291e78Daf55c6e959C03 & 0x16a9940bF38116861350f00Cff22FdCF17eABa59
+Addresses 0x47B6DcD48414B9c4B42311DaB05DF17E9827Dd3b & 0xc89B080d4561Da24151c5C6476A651eE21585F45
 
 Step into the grandeur of ancient Rome, where the echoes of the colosseum resound once again. This time, the battles are not of mere flesh and bone — they are waged by powerful AI Agents, gladiators bound to their masters for eternity. Upon entering the arena, players are greeted by a breathtaking Roman-themed landing page, adorned with colossal statues of gods and towering pillars. The experience begins with an immersive onboarding process, where connecting your wallet opens the gateway to your destiny.
 
