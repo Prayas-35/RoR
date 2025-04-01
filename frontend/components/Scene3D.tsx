@@ -15,9 +15,13 @@ export default function Scene3D() {
     "https://www.gstatic.com/draco/versioned/decoders/1.5.5/"
   );
 
-  const gltf = useLoader(GLTFLoader, "/modelzcomp.glb", (loader) => {
-    (loader as GLTFLoader).setDRACOLoader(dracoLoader);
-  });
+  const gltf = useLoader(
+    GLTFLoader,
+    "https://ipfs.io/ipfs/bafybeiafzwyboy3ofjfdpzmqnx24qrb735jrotnpb5hffgnjqndzr7aliu",
+    (loader) => {
+      (loader as GLTFLoader).setDRACOLoader(dracoLoader);
+    }
+  );
 
   // Track scroll position
   useEffect(() => {
