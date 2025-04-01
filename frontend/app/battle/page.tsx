@@ -493,8 +493,7 @@ export default function BattlePage() {
         </footer>
       </div>
       {/* Victory Modal - Outside the main container */}
-      if (humanGladiator && aiGladiator){" "}
-      {
+      {humanGladiator && aiGladiator && (
         <VictoryModal
           showVictoryModal={battleState.showVictoryModal}
           setShowVictoryModal={setShowVictoryModal}
@@ -511,7 +510,7 @@ export default function BattlePage() {
           levelUp={levelUp}
           newTotalExp={newTotalExp}
         />
-      }
+      )}
       {/* Defeat Modal - Outside the main container */}
       {humanGladiator && aiGladiator && (
         <DefeatModal

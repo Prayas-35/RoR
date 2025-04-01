@@ -15,14 +15,14 @@ export const GodCard = ({ god, isHuman }: GodCardProps) => {
           god.rarity === "Legendary"
             ? "border-yellow-500 shadow-yellow-500/20"
             : god.rarity === "Epic"
-            ? "border-purple-500 shadow-purple-500/20" 
-            : "border-blue-500 shadow-blue-500/20"
+              ? "border-purple-500 shadow-purple-500/20"
+              : "border-blue-500 shadow-blue-500/20"
         }
         shadow-lg hover:shadow-xl transition-all duration-300`}
     >
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src={isHuman ? god.icon : getGodPlaceholderImage()}
+          src={isHuman ? god.icon : getGodPlaceholderImage(god.name)}
           alt={god.name}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -34,15 +34,19 @@ export const GodCard = ({ god, isHuman }: GodCardProps) => {
       </div>
       <div className="aspect-square relative">
         <div className="absolute bottom-2 w-full text-center">
-          <div className="text-sm font-bold text-white drop-shadow-lg">{god.name.charAt(0).toUpperCase() + god.name.slice(1)}</div>
-          <div className={`text-xs font-medium
+          <div className="text-sm font-bold text-white drop-shadow-lg">
+            {god.name.charAt(0).toUpperCase() + god.name.slice(1)}
+          </div>
+          <div
+            className={`text-xs font-medium
             ${
               god.rarity === "Legendary"
                 ? "text-yellow-400"
                 : god.rarity === "Epic"
-                ? "text-purple-400"
-                : "text-blue-400"
-            }`}>
+                  ? "text-purple-400"
+                  : "text-blue-400"
+            }`}
+          >
             {god.rarity}
           </div>
         </div>

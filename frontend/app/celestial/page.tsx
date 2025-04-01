@@ -35,7 +35,7 @@ export default function Home() {
   );
 }
 
-export function NFTMinter() {
+function NFTMinter() {
   const [metadata, setMetadata] = useState<string>(`{
   "name": "My NFT",
   "description": "This is my awesome NFT",
@@ -89,20 +89,6 @@ export function NFTMinter() {
     const metadataIpfsUrl = `https://ipfs.io/ipfs/${metadataUpload.IpfsHash}`;
     console.log("Metadata uploaded to IPFS: ", metadataIpfsUrl);
   };
-
-  //   const mintNFT = async () => {
-  //     // Reset states
-  //     setMintSuccess(false);
-  //     setMintError("");
-  //     setMintTxHash("");
-
-  //     // Validate JSON first
-  //     if (!validateJSON(metadata)) {
-  //       return;
-  //     }
-
-  //     setIsMinting(true);
-  //   };
 
   return (
     <>

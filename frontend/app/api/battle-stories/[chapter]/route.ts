@@ -5,12 +5,9 @@ import { getBattleStoryByChapter } from "@/lib/services/battleStoryService";
  * GET /api/battle-stories/[chapter]
  * Retrieves a battle story by its chapter number
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: { chapter: string } }
-) {
+export async function GET(request: NextRequest, { params }: any) {
   try {
-    const chapterNumber = parseInt(context.params.chapter);
+    const chapterNumber = parseInt(params.chapter);
 
     if (isNaN(chapterNumber)) {
       return NextResponse.json(
@@ -31,7 +28,7 @@ export async function GET(
     return NextResponse.json(story);
   } catch (error: any) {
     console.error(
-      `Error retrieving battle story chapter ${context.params.chapter}:`,
+      `Error retrieving battle story chapter ${params.chapter}:`,
       error
     );
     return NextResponse.json(

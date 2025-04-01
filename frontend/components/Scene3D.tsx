@@ -3,11 +3,20 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Environment, Float, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_SRI,
+  pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY_SRI,
+});
 
 export default function Scene3D() {
   const modelRef = useRef<THREE.Group>(null);
   const [scrollY, setScrollY] = useState(0);
-  const gltf = useLoader(GLTFLoader, "/modelz.glb");
+  const gltf = useLoader(
+    GLTFLoader,
+    "https://pub-e15719a341dd4348992e03ad5d619bb2.r2.dev/modelz.glb"
+  );
 
   // Track scroll position
   useEffect(() => {

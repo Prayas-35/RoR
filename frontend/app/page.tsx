@@ -12,6 +12,7 @@ import Link from "next/link";
 export default function Home() {
   const containerRef = useRef(null);
   const [scrollHeight, setScrollHeight] = useState("300vh"); // Initial height to enable scrolling
+  // const [upload, setUpload] = useState(false);
 
   // Update scroll height based on content
   useEffect(() => {
@@ -222,7 +223,8 @@ export default function Home() {
 
             <div className="text-sm text-stone-500">
               <p>
-                © {new Date().getFullYear()} Ruins of Rome. All rights reserved.
+                © {new Date().getFullYear()} Ruins of Rome. All rights
+                reserved.
               </p>
               <p className="mt-1">A historical exploration experience</p>
             </div>
