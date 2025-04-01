@@ -5,10 +5,14 @@ export async function POST(request: NextRequest) {
   try {
     const { name, type, description, spells, buffs } = await request.json();
 
-    const descriptionPrompt = `Create a vivid and unique description of ${name}, a ${type} in ancient mythology.
-      Include details about their appearance, powers (${Object.keys(spells).join(", ")}), 
-      and special abilities (${Object.keys(buffs).join(", ")}).
-      Place them in an epic and memorable scene that captures their essence.`;
+    const descriptionPrompt = `Create a vivid and unique description of ${
+      name
+    }, a ${type} in ancient mythology.
+        Include details about their appearance, powers (${Object.keys(
+          spells
+        ).join(", ")}), 
+        and special abilities (${Object.keys(buffs).join(", ")}).
+        Place them in an epic and memorable scene that captures their essence.`;
 
     const generatedDescription = await generate(descriptionPrompt);
 

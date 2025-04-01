@@ -115,7 +115,7 @@ export default function GladiatorOnboarding() {
   }
 
   // New function to generate content for each god sequentially
-  async function generateGodsContent(gods) {
+  async function generateGodsContent(gods: God[]) {
     try {
       const enrichedGods = [...gods];
 
@@ -174,7 +174,7 @@ export default function GladiatorOnboarding() {
   }
 
   // New function to mint each god
-  async function mintGods(gods) {
+  async function mintGods(gods: God[]) {
     try {
       for (let i = 0; i < gods.length; i++) {
         setCurrentGodIndex(i);
