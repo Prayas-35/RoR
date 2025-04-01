@@ -64,6 +64,37 @@ async function uploadToPinata(data: generatedGladiatorData) {
   return ipfsUrl;
 }
 
+async function celestialData(celestial: any) {
+  const celRes = await fetch("/api/celestial/init/descGen", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ celestial: celestial }),
+  });
+  const res = await celRes.json();
+
+  if (!res.success) {
+    throw new Error("Failed to generate celestial data");
+  }
+
+  const imageRes = await fetch("/api/celestial/init/imageGen", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ celestial: res }),
+  });
+  const imageData = await imageRes.json();
+
+  if (!imageData.success) {
+    throw new Error("Failed to generate celestial image");
+  }
+  res.image = imageData.image;
+  res.success = true;
+  return res;
+}
+
 export default function GladiatorOnboarding() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -153,26 +184,19 @@ export default function GladiatorOnboarding() {
 
       const celestialResponses = await Promise.all(
         initialCelestials.map(async (c) => {
-          const celRes = await fetch("/api/celestial/init", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ celestial: c }),
-          });
-          const res = await celRes.json();
-          console.log("Celestial response:", res);
-          return res;
+          const celRes = await celestialData(c);
+          console.log("Celestial response:", celRes);
+          if (!celRes.success) {
+            throw new Error("Failed to generate celestial data");
+          }
+          return celRes;
         })
       );
 
       setCelResponse(celestialResponses);
 
       // Mint celestial NFTs sequentially
-      console.log(
-        "Celestial response array length:",
-        celestialResponses.length
-      );
+
       for (const god of celestialResponses) {
         const res = await fetch("/api/celestial/mintInit", {
           method: "POST",
