@@ -40,8 +40,6 @@ export default function GladiatorOnboarding() {
     args: [address],
   });
 
-  console.log("Claimed: ", claimed);
-
   useEffect(() => {
     setUserAddress(address);
   }, [address]);
@@ -106,7 +104,7 @@ export default function GladiatorOnboarding() {
       console.log("File uploaded to IPFS:", ipfsUrl);
 
       const celRes = await fetch("/api/celestial/init", {
-        method: "GET",
+        method: "POST",
       });
 
       const celData = await celRes.json();

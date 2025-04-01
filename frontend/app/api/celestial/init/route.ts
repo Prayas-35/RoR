@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { config } from "@/lib/config";
 import { generate, generateImage } from "@/functions/generate";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const celestials = config.celestials;
   const initialCelestials = celestials
     .filter((c) => c.tier === 3)
@@ -37,34 +37,40 @@ export async function GET(request: NextRequest) {
 
       const imageUrl = await generateImage(imagePrompt);
 
-        return {
-            name: c.name,
-            description: c.description,
-            image: imageUrl,
-            attributes: [
-                {
-                    trait_type: "Type",
-                    value: c.type
-                },
-                {
-                    trait_type: "Tier",
-                    value: c.tier
-                },
-                ...Object.entries(c.buffs).map(([name, value]) => ({
-                    trait_type: name,
-                    value: value
-                })),
-                ...Object.entries(c.spells).map(([name, value]) => ({
-                    trait_type: name,
-                    value: value
-                }))
-            ],
-            properties: {
-                category: "celestial",
-                rarity_score: c.tier === 1 ? 90 + Math.floor(Math.random() * 10) : c.tier === 2 ? 60 + Math.floor(Math.random() * 20) : 20 + Math.floor(Math.random() * 10)
-            }
-        };
-    }));
+      return {
+        name: c.name,
+        description: c.description,
+        image: imageUrl,
+        attributes: [
+          {
+            trait_type: "Type",
+            value: c.type,
+          },
+          {
+            trait_type: "Tier",
+            value: c.tier,
+          },
+          ...Object.entries(c.buffs).map(([name, value]) => ({
+            trait_type: name,
+            value: value,
+          })),
+          ...Object.entries(c.spells).map(([name, value]) => ({
+            trait_type: name,
+            value: value,
+          })),
+        ],
+        properties: {
+          category: "celestial",
+          rarity_score:
+            c.tier === 1
+              ? 90 + Math.floor(Math.random() * 10)
+              : c.tier === 2
+                ? 60 + Math.floor(Math.random() * 20)
+                : 20 + Math.floor(Math.random() * 10),
+        },
+      };
+    })
+  );
 
   return NextResponse.json(initCelestials);
 }
