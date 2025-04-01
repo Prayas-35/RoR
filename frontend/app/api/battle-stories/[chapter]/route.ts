@@ -5,10 +5,7 @@ import { getBattleStoryByChapter } from "@/lib/services/battleStoryService";
  * GET /api/battle-stories/[chapter]
  * Retrieves a battle story by its chapter number
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { chapter: string } }
-) {
+export async function GET({ params }: { params: { chapter: string } }) {
   try {
     const chapterNumber = parseInt(params.chapter);
 
