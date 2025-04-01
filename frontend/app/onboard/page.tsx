@@ -10,7 +10,9 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { config } from "@/lib/config";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
@@ -22,17 +24,18 @@ export default function GladiatorOnboarding() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [isMinting, setIsMinting] = useState(false);
-  // const [mintURI, setMintURI] = useState("");
+  const [mintURI, setMintURI] = useState("");
   const [claimed, setClaimed] = useState(false);
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
     undefined
   );
   const [isLoaded, setIsLoaded] = useState(false);
+  const [celResponse, setCelResponse] = useState<any[]>([]);
 
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  const { refetch: refetchClaimBool } = useReadContract({
+  const { data, refetch: refetchClaimBool } = useReadContract({
     abi: gladiatorAbi,
     address: gladiatorAddress,
     functionName: "hasClaimedNFT",
@@ -44,6 +47,15 @@ export default function GladiatorOnboarding() {
   }, [address]);
 
   useEffect(() => {
+    // Set the loaded state after a small delay to trigger animations
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     console.log(
       "Setting up refetch interval for fetching if gladiator alr claimed:"
     );
@@ -51,14 +63,14 @@ export default function GladiatorOnboarding() {
     const interval = setInterval(() => {
       refetchClaimBool()
         .then((result: any) => {
-          console.log("Claim check result: ", result);
+          // console.log("Claim check result: ", result);
           setClaimed(result);
         })
         .catch((error: any) => {
           console.error("Error during claim check: ", error);
           setClaimed(false);
         });
-    }, 10000);
+    }, 5000);
 
     return () => {
       console.log("Clearing refetch interval.\n");
@@ -93,19 +105,35 @@ export default function GladiatorOnboarding() {
       const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
       console.log("File uploaded to IPFS:", ipfsUrl);
 
-      const celRes = await fetch("/api/celestial/init", {
-        method: "POST",
-      });
+      const celestials = config.celestials;
+      const initialCelestials = celestials
+        .filter((c) => c.tier === 3)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
 
-      const celData = await celRes.json();
-      console.log("Initial Gods:", celData);
+      console.log("Initial Celestials from front:", initialCelestials);
 
-      if (!celData) {
-        throw new Error("Failed to generate intial god data");
-      }
+      const celestialResponses = await Promise.all(
+        initialCelestials.map(async (c) => {
+          const celRes = await fetch("/api/celestial/init", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ celestial: c }),
+          });
+          const res = await celRes.json();
+          console.log("Celestial response:", res);
+          return res;
+        })
+      );
+
+      setCelResponse(celestialResponses);
 
       // Mint celestial NFTs sequentially
-      for (const god of celData) {
+      console.log("Celestial response array length:", celestialResponses.length);
+      for (const god of celestialResponses) {
+        console.log("God data:", god);
         const res = await fetch("/api/celestial/mintInit", {
           method: "POST",
           headers: {
@@ -150,6 +178,10 @@ export default function GladiatorOnboarding() {
     }
   }
 
+  useEffect(() => {
+    console.log("celResponse", celResponse);
+  }, [celResponse]);
+
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0b060a]">
       {/* Background Images with animations */}
@@ -181,9 +213,8 @@ export default function GladiatorOnboarding() {
 
       {/* Content with fade-in animation */}
       <div
-        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${
-          isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
+        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-teal-300 mb-2 tracking-wide animate-pulse-slow">
