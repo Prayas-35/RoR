@@ -10,7 +10,7 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-// import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 const pinata = new PinataSDK({
@@ -23,7 +23,7 @@ export default function GladiatorOnboarding() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [isMinting, setIsMinting] = useState(false);
-  // const [mintURI, setMintURI] = useState("");
+  const [mintURI, setMintURI] = useState("");
   const [claimed, setClaimed] = useState(false);
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
     undefined
@@ -33,7 +33,7 @@ export default function GladiatorOnboarding() {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  const { refetch: refetchClaimBool } = useReadContract({
+  const { data, refetch: refetchClaimBool } = useReadContract({
     abi: gladiatorAbi,
     address: gladiatorAddress,
     functionName: "hasClaimedNFT",
@@ -43,6 +43,15 @@ export default function GladiatorOnboarding() {
   useEffect(() => {
     setUserAddress(address);
   }, [address]);
+
+  useEffect(() => {
+    // Set the loaded state after a small delay to trigger animations
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     console.log(
@@ -59,7 +68,7 @@ export default function GladiatorOnboarding() {
           console.error("Error during claim check: ", error);
           setClaimed(false);
         });
-    }, 10000);
+    }, 15000);
 
     return () => {
       console.log("Clearing refetch interval.\n");
@@ -94,6 +103,8 @@ export default function GladiatorOnboarding() {
       const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
       console.log("File uploaded to IPFS:", ipfsUrl);
 
+      setMintURI(ipfsUrl);
+
       const celRes = await fetch("/api/celestial/init", {
         method: "POST",
       });
@@ -125,8 +136,8 @@ export default function GladiatorOnboarding() {
         const data = await res.json();
         console.log("Server Response:", data);
 
-        // // Add a small delay between transactions to ensure proper sequencing
-        // await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Add a small delay between transactions to ensure proper sequencing
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
 
       const tx = await writeContractAsync({

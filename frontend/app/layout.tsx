@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./_providers/rainbowkit";
 import ConvexClientProviders from "@/providers/ConvexClientProviders";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Ruins of Rome",

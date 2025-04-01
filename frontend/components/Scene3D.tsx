@@ -1,22 +1,23 @@
 import { useRef, useEffect, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Environment, Float, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
-import { PinataSDK } from "pinata-web3";
-
-const pinata = new PinataSDK({
-  pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_SRI,
-  pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY_SRI,
-});
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 
 export default function Scene3D() {
   const modelRef = useRef<THREE.Group>(null);
   const [scrollY, setScrollY] = useState(0);
-  const gltf = useLoader(
-    GLTFLoader,
-    "https://pub-e15719a341dd4348992e03ad5d619bb2.r2.dev/modelz.glb"
+
+  // Initialize Draco loader with CDN path
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath(
+    "https://www.gstatic.com/draco/versioned/decoders/1.5.5/"
   );
+
+  const gltf = useLoader(GLTFLoader, "/modelzcomp.glb", (loader) => {
+    (loader as GLTFLoader).setDRACOLoader(dracoLoader);
+  });
 
   // Track scroll position
   useEffect(() => {
@@ -84,7 +85,7 @@ export default function Scene3D() {
         </group>
       </Float>
       {/* Improved lighting setup */}
-      <ambientLight intensity={0.6} /> {/* Increased ambient light */}
+      <ambientLight intensity={0.6} />
       <spotLight
         position={[10, 10, 10]}
         angle={0.3}
@@ -92,14 +93,8 @@ export default function Scene3D() {
         intensity={0.8}
         castShadow
       />
-      <pointLight position={[-10, -10, -10]} color="#444444" intensity={0.5} />{" "}
-      {/* Lighter color */}
-      <pointLight
-        position={[10, -10, 10]}
-        color="#444444"
-        intensity={0.5}
-      />{" "}
-      {/* Lighter color */}
+      <pointLight position={[-10, -10, -10]} color="#444444" intensity={0.5} />
+      <pointLight position={[10, -10, 10]} color="#444444" intensity={0.5} />
       {/* Camera animation */}
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45}>
         <spotLight
