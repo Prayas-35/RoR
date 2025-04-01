@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAllBattleStories } from "@/lib/battle/battleHistoryUtils";
+// import { getAllBattleStories } from "@/lib/battle/battleHistoryUtils";
 
 interface BattleStory {
   _id: string;
@@ -124,8 +124,8 @@ export default function ChroniclesPage() {
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <Scroll className="h-16 w-16 text-slate-500 mb-4" />
                 <p className="text-slate-300 mb-2">
-                  Your battle chronicles will appear here after you've completed
-                  battles in the Colosseum.
+                  Your battle chronicles will appear here after you&apos;ve
+                  completed battles in the Colosseum.
                 </p>
                 <p className="text-slate-400 text-sm">
                   Each victory and defeat creates a new chapter in your legend.

@@ -2,8 +2,6 @@ import { generate } from "@/functions/generate";
 import { parseUntilJson } from "@/functions/parseUntilJson";
 import { NextRequest, NextResponse } from "next/server";
 import { generateImage as generateImageFunction } from "@/functions/generate";
-import { ethers } from "ethers";
-import { celestialAbi, celestialAddress } from "@/app/abi";
 
 const COLORS = [
   "blue",
@@ -36,7 +34,7 @@ const PERSONALITY_TYPES = [
 const BASE_ATTACK = 50;
 const BASE_DEFENCE = 50;
 const BASE_SPEED = 50;
-const BASE_MOVES = 3;
+// const BASE_MOVES = 3;
 const ATTACK_MOVES = ["melee", "ranged"];
 const DEFENCE_MOVES = ["fortify", "heal"];
 const PASSIVE_MOVES = [

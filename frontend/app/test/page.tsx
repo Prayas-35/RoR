@@ -6,8 +6,8 @@ import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-const mintTest = () => {
-  const { writeContractAsync, status } = useWriteContract();
+const MintTest = () => {
+  const { writeContractAsync } = useWriteContract();
   const { address } = useAccount();
   const tokenURI = {
     name: "Jupiter, King of Gods",
@@ -100,4 +100,4 @@ const mintTest = () => {
   );
 };
 
-export default mintTest;
+export default MintTest;

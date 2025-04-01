@@ -1,32 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Swords,
-  Shield,
-  Plus,
-  Footprints,
-  Zap,
-  Trophy,
-  X,
-  Users,
-  Bot,
-  Copy,
-  ArrowRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
+// import {
+//   Swords,
+//   Shield,
+//   Plus,
+//   Footprints,
+//   Zap,
+//   Trophy,
+//   X,
+//   Users,
+//   Bot,
+//   Copy,
+//   ArrowRight,
+// } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardFooter,
+//   CardHeader,
+// } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input";
+// import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import confetti from "canvas-confetti";
+// import confetti from "canvas-confetti";
 import {
   BattleMode,
   Gladiator,
@@ -93,7 +93,7 @@ export default function BattlePage() {
   const { address } = useAccount();
   const { data: gladiatorData } = useReadContract({
     abi: gladiatorAbi,
-    address: gladiatorAddress, 
+    address: gladiatorAddress,
     functionName: "getGladiatorForPlayer",
     args: [address],
   });
@@ -113,10 +113,20 @@ export default function BattlePage() {
   useEffect(() => {
     const initGladiators = async () => {
       if (gladiatorData && celestialData) {
-        const parsedCelestialData = celestialData.map((uri: string) => JSON.parse(uri));
+        const parsedCelestialData = celestialData.map((uri: string) =>
+          JSON.parse(uri)
+        );
         console.log("parsedCelestialData", parsedCelestialData);
-        const human = await generateGladiator(true, gladiatorData, parsedCelestialData);
-        const ai = await generateGladiator(false, gladiatorData, parsedCelestialData);
+        const human = await generateGladiator(
+          true,
+          gladiatorData,
+          parsedCelestialData
+        );
+        const ai = await generateGladiator(
+          false,
+          gladiatorData,
+          parsedCelestialData
+        );
         setHumanGladiator(human);
         setAiGladiator(ai);
       }
@@ -201,6 +211,8 @@ export default function BattlePage() {
     if (
       battleMode === "vsAI" &&
       !battleState.battleStarted &&
+      aiGladiator?.speed &&
+      humanGladiator?.speed &&
       aiGladiator.speed > humanGladiator.speed
     ) {
       // Small delay to ensure component is fully rendered
@@ -218,7 +230,7 @@ export default function BattlePage() {
 
       return () => clearTimeout(timer);
     }
-  }, [battleMode]);
+  }, [battleMode, aiGladiator, humanGladiator, battleState.battleStarted]);
 
   // Update displayed health with animation when actual health changes
   useEffect(() => {
@@ -278,7 +290,7 @@ export default function BattlePage() {
         }
       }
     }
-  }, [battleState.currentTurn]);
+  }, [battleState, aiGladiator, humanGladiator, toast]);
 
   // Constants for level/exp calculation
   const EXP_PER_LEVEL = 100; // Base exp needed per level
@@ -291,6 +303,7 @@ export default function BattlePage() {
 
   // Handler functions
   const startBattleFn = () => {
+    if (!humanGladiator || !aiGladiator) return;
     startBattle(
       battleState,
       humanGladiator,
@@ -332,6 +345,8 @@ export default function BattlePage() {
 
   // Handle ability activation wrapper
   const handleAbilityClick = (gladiatorName: string, abilityName: string) => {
+    if (!humanGladiator || !aiGladiator) return;
+
     handleAbilityActivation(
       gladiatorName,
       abilityName,
@@ -406,7 +421,6 @@ export default function BattlePage() {
               setDefenseBonusTurns={setDefenseBonusTurns}
             />
           )}
-
           {/* Room Creation/Joining UI - Only show these if we're not in an active battle */}
           {battleMode === "vsPlayers" && !roomId && (
             <>
@@ -442,33 +456,33 @@ export default function BattlePage() {
               )}
             </>
           )}
-
           {/* Battle Interface - Only show for VS AI or when a multiplayer room is active */}
-          {(battleMode === "vsAI" ||
-            (battleMode === "vsPlayers" && roomId)) && (
-            <BattleArena
-              battleMode={battleMode}
-              roomId={roomId}
-              humanGladiator={humanGladiator}
-              aiGladiator={aiGladiator}
-              displayedHumanHealth={battleState.displayedHumanHealth}
-              displayedAIHealth={battleState.displayedAIHealth}
-              humanDefenseBonus={battleState.humanDefenseBonus}
-              aiDefenseBonus={battleState.aiDefenseBonus}
-              defenseBonusTurns={battleState.defenseBonusTurns}
-              showHumanAttackAnimation={battleState.showHumanAttackAnimation}
-              showAIAttackAnimation={battleState.showAIAttackAnimation}
-              attackAnimationType={battleState.attackAnimationType}
-              targetShake={battleState.targetShake}
-              battleStarted={battleState.battleStarted}
-              currentTurn={battleState.currentTurn}
-              onAbilityClick={handleAbilityClick}
-              setBattleMode={setBattleMode}
-              setRoomId={setRoomId}
-              setPlayerRoomMode={setPlayerRoomMode}
-              resetBattleState={resetBattleState}
-            />
-          )}
+          {(battleMode === "vsAI" || (battleMode === "vsPlayers" && roomId)) &&
+            humanGladiator &&
+            aiGladiator && (
+              <BattleArena
+                battleMode={battleMode}
+                roomId={roomId}
+                humanGladiator={humanGladiator}
+                aiGladiator={aiGladiator}
+                displayedHumanHealth={battleState.displayedHumanHealth}
+                displayedAIHealth={battleState.displayedAIHealth}
+                humanDefenseBonus={battleState.humanDefenseBonus}
+                aiDefenseBonus={battleState.aiDefenseBonus}
+                defenseBonusTurns={battleState.defenseBonusTurns}
+                showHumanAttackAnimation={battleState.showHumanAttackAnimation}
+                showAIAttackAnimation={battleState.showAIAttackAnimation}
+                attackAnimationType={battleState.attackAnimationType}
+                targetShake={battleState.targetShake}
+                battleStarted={battleState.battleStarted}
+                currentTurn={battleState.currentTurn}
+                onAbilityClick={handleAbilityClick}
+                setBattleMode={setBattleMode}
+                setRoomId={setRoomId}
+                setPlayerRoomMode={setPlayerRoomMode}
+                resetBattleState={resetBattleState}
+              />
+            )}
         </main>
 
         {/* Minimal Footer */}
@@ -478,37 +492,40 @@ export default function BattlePage() {
           </p>
         </footer>
       </div>
-
       {/* Victory Modal - Outside the main container */}
-      <VictoryModal
-        showVictoryModal={battleState.showVictoryModal}
-        setShowVictoryModal={setShowVictoryModal}
-        humanGladiator={humanGladiator}
-        aiGladiator={aiGladiator}
-        humanHealth={battleState.humanHealth}
-        currentPlayerExp={battleState.currentPlayerExp}
-        playerLevel={battleState.playerLevel}
-        earnedExp={battleState.earnedExp}
-        showExpAnimation={battleState.showExpAnimation}
-        expProgress={expProgress}
-        expToNextLevel={expToNextLevel}
-        newLevel={newLevel}
-        levelUp={levelUp}
-        newTotalExp={newTotalExp}
-      />
-
+      if (humanGladiator && aiGladiator){" "}
+      {
+        <VictoryModal
+          showVictoryModal={battleState.showVictoryModal}
+          setShowVictoryModal={setShowVictoryModal}
+          humanGladiator={humanGladiator}
+          aiGladiator={aiGladiator}
+          humanHealth={battleState.humanHealth}
+          currentPlayerExp={battleState.currentPlayerExp}
+          playerLevel={battleState.playerLevel}
+          earnedExp={battleState.earnedExp}
+          showExpAnimation={battleState.showExpAnimation}
+          expProgress={expProgress}
+          expToNextLevel={expToNextLevel}
+          newLevel={newLevel}
+          levelUp={levelUp}
+          newTotalExp={newTotalExp}
+        />
+      }
       {/* Defeat Modal - Outside the main container */}
-      <DefeatModal
-        showDefeatModal={battleState.showDefeatModal}
-        setShowDefeatModal={setShowDefeatModal}
-        humanGladiator={humanGladiator}
-        aiGladiator={aiGladiator}
-        aiHealth={battleState.aiHealth}
-        currentPlayerExp={battleState.currentPlayerExp}
-        playerLevel={battleState.playerLevel}
-        expProgress={expProgress}
-        expToNextLevel={expToNextLevel}
-      />
+      {humanGladiator && aiGladiator && (
+        <DefeatModal
+          showDefeatModal={battleState.showDefeatModal}
+          setShowDefeatModal={setShowDefeatModal}
+          humanGladiator={humanGladiator}
+          aiGladiator={aiGladiator}
+          aiHealth={battleState.aiHealth}
+          currentPlayerExp={battleState.currentPlayerExp}
+          playerLevel={battleState.playerLevel}
+          expProgress={expProgress}
+          expToNextLevel={expToNextLevel}
+        />
+      )}
     </>
   );
 }

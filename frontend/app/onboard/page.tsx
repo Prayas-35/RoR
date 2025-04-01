@@ -10,7 +10,7 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 const pinata = new PinataSDK({
@@ -23,7 +23,7 @@ export default function GladiatorOnboarding() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [isMinting, setIsMinting] = useState(false);
-  const [mintURI, setMintURI] = useState("");
+  // const [mintURI, setMintURI] = useState("");
   const [claimed, setClaimed] = useState(false);
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
     undefined
@@ -33,12 +33,14 @@ export default function GladiatorOnboarding() {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  const { data, refetch: refetchClaimBool } = useReadContract({
+  const { refetch: refetchClaimBool } = useReadContract({
     abi: gladiatorAbi,
     address: gladiatorAddress,
     functionName: "hasClaimedNFT",
     args: [address],
   });
+
+  console.log("Claimed: ", claimed);
 
   useEffect(() => {
     setUserAddress(address);
@@ -68,7 +70,7 @@ export default function GladiatorOnboarding() {
           console.error("Error during claim check: ", error);
           setClaimed(false);
         });
-    }, 5000);
+    }, 10000);
 
     return () => {
       console.log("Clearing refetch interval.\n");
@@ -102,8 +104,6 @@ export default function GladiatorOnboarding() {
       const pinataRes = await pinata.upload.json(data);
       const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
       console.log("File uploaded to IPFS:", ipfsUrl);
-
-      setMintURI(ipfsUrl);
 
       const celRes = await fetch("/api/celestial/init", {
         method: "GET",
