@@ -1,3 +1,467 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// import { Shield, Sword, Wallet } from "lucide-react";
+// import { useAccount, useReadContract, useWriteContract } from "wagmi";
+// import { gladiatorAbi, gladiatorAddress } from "../abi";
+// import { PinataSDK } from "pinata-web3";
+// import { ConnectButton } from "@rainbow-me/rainbowkit";
+// import { redirect } from "next/navigation";
+// import { useRouter } from "next/navigation";
+
+// const pinata = new PinataSDK({
+//   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
+//   pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY,
+// });
+
+// export default function GladiatorOnboarding() {
+//   const router = useRouter();
+//   const [name, setName] = useState("");
+//   const [gender, setGender] = useState("male");
+//   const [isMinting, setIsMinting] = useState(false);
+//   const [mintURI, setMintURI] = useState("");
+//   const [claimed, setClaimed] = useState(false);
+//   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
+//     undefined
+//   );
+//   const [isLoaded, setIsLoaded] = useState(false);
+
+//   const { address } = useAccount();
+//   const { writeContractAsync } = useWriteContract();
+
+//   const { data, refetch: refetchClaimBool } = useReadContract({
+//     abi: gladiatorAbi,
+//     address: gladiatorAddress,
+//     functionName: "hasClaimedNFT",
+//     args: [address],
+//   });
+
+//   useEffect(() => {
+//     setUserAddress(address);
+//   }, [address]);
+
+//   useEffect(() => {
+//     // Set the loaded state after a small delay to trigger animations
+//     const timer = setTimeout(() => {
+//       setIsLoaded(true);
+//     }, 300);
+
+//     return () => clearTimeout(timer);
+//   }, []);
+
+//   useEffect(() => {
+//     console.log(
+//       "Setting up refetch interval for fetching if gladiator alr claimed:"
+//     );
+
+//     const interval = setInterval(() => {
+//       refetchClaimBool()
+//         .then((result: any) => {
+//           console.log("Claim check result: ", result);
+//           setClaimed(result);
+//         })
+//         .catch((error: any) => {
+//           console.error("Error during claim check: ", error);
+//           setClaimed(false);
+//         });
+//     }, 5000);
+
+//     return () => {
+//       console.log("Clearing refetch interval.\n");
+//       clearInterval(interval);
+//     };
+//   }, [refetchClaimBool]);
+
+//   async function handleMint() {
+//     console.log("Minting...");
+//     // if (claimed) {
+//     //   console.error("Error: Already Claimed.");
+//     //   return;
+//     // }
+
+//     setIsMinting(true);
+//     try {
+//       const res = await fetch("/api/gladiator/generate", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ name, gender }),
+//       });
+//       const data = await res.json();
+//       console.log("Backend response:", data);
+
+//       if (!data.success) {
+//         throw new Error("Failed to generate gladiator data");
+//       }
+
+//       const pinataRes = await pinata.upload.json(data);
+//       const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
+//       console.log("File uploaded to IPFS:", ipfsUrl);
+
+//       setMintURI(ipfsUrl);
+
+//       const celRes = await fetch("/api/celestial/init", {
+//         method: "POST",
+//       });
+
+//       const celData = await celRes.json();
+//       console.log("Initial Gods:", celData);
+
+//       if (!celData) {
+//         throw new Error("Failed to generate intial god data");
+//       }
+
+//       // Mint celestial NFTs sequentially
+//       for (const god of celData) {
+//         const res = await fetch("/api/celestial/mintInit", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             name: god.name,
+//             description: god.description,
+//             imageUrl: god.image,
+//             attributes: god.attributes,
+//             properties: god.properties,
+//             address: address,
+//           }),
+//         });
+
+//         const data = await res.json();
+//         console.log("Server Response:", data);
+
+//         // Add a small delay between transactions to ensure proper sequencing
+//         await new Promise((resolve) => setTimeout(resolve, 2000));
+//       }
+
+//       const tx = await writeContractAsync({
+//         abi: gladiatorAbi,
+//         address: gladiatorAddress,
+//         functionName: "mintGladiator",
+//         args: [ipfsUrl],
+//       });
+//       console.log("Minting transaction:", tx);
+//       if (tx) {
+//         console.log("Minting completed successfully!");
+//         // The transaction hash is returned, we can use it to track the transaction
+//         console.log("Transaction hash:", tx);
+//         setIsMinting(false);
+//         router.push("/dashboard");
+//       }
+//     } catch (error) {
+//       console.error("Error minting gladiator:", error);
+//       // You might want to show an error message to the user here
+//     } finally {
+//       setIsMinting(false);
+//     }
+//   }
+
+//   return (
+//     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0b060a]">
+//       {/* Background Images with animations */}
+//       <div className="absolute inset-0 z-0 flex mx-10 ">
+//         <div
+//           className={`flex-1 bg-contain bg-left bg-no-repeat transition-all duration-1000 ease-out
+//                         ${isLoaded ? "opacity-100" : "opacity-0"}`}
+//           style={{
+//             backgroundImage: `url('/nymph.jpg')`,
+//           }}
+//         />
+//         <div
+//           className={`flex-1 bg-contain bg-left bg-no-repeat transition-all duration-1000 ease-out
+//                         ${isLoaded ? "opacity-100" : "opacity-0"}`}
+//           style={{
+//             backgroundImage: `url('/nymph.jpg')`,
+//             transform: "scaleX(-1)",
+//           }}
+//         />
+//       </div>
+
+//       {/* Decorative overlay with subtle breathing animation */}
+//       <div
+//         className="absolute inset-0 z-0 bg-gradient-to-b from-[#0b060a]/0 via-[#0b060a]/50 to-[#0b060a]/0"
+//         style={{
+//           animation: "breathe 8s ease-in-out infinite",
+//         }}
+//       />
+
+//       {/* Content with fade-in animation */}
+//       <div
+//         className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${
+//           isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+//         }`}
+//       >
+//         <div className="text-center mb-8">
+//           <h1 className="text-4xl md:text-5xl font-bold text-teal-300 mb-2 tracking-wide animate-pulse-slow">
+//             FORGE YOUR CHAMPION
+//           </h1>
+//           <p className="text-teal-100 text-lg">
+//             Enter the Colosseum and claim your glory
+//           </p>
+//         </div>
+
+//         <div className="bg-stone-900/80 border-2 border-teal-700 rounded-lg p-6 backdrop-blur-sm transition-all duration-500 hover:border-teal-500">
+//           <div className="flex justify-center mb-6">
+//             <div className="flex items-center gap-4">
+//               <Sword className="h-8 w-8 text-teal-500 animate-swing" />
+//               <Shield className="h-8 w-8 text-teal-500 animate-pulse-slow" />
+//             </div>
+//           </div>
+
+//           <div className="space-y-6">
+//             <div className="space-y-2">
+//               <Label htmlFor="name" className="text-teal-200 text-lg">
+//                 Gladiator Name
+//               </Label>
+//               <Input
+//                 id="name"
+//                 value={name}
+//                 onChange={(e) => setName(e.target.value)}
+//                 className="bg-stone-800 border-teal-700 text-teal-100 focus:ring-teal-500 focus:border-teal-500 transition-all duration-300 focus:scale-102"
+//                 placeholder="Enter your gladiator's name"
+//               />
+//             </div>
+
+//             <div className="space-y-2">
+//               <Label className="text-teal-200 text-lg">Choose Your Path</Label>
+//               <RadioGroup
+//                 value={gender}
+//                 onValueChange={setGender}
+//                 className="flex gap-4"
+//               >
+//                 <div className="flex items-center space-x-2 bg-stone-800 p-3 rounded-md border border-teal-700/50 flex-1 cursor-pointer hover:bg-stone-700 transition-colors hover:border-teal-500">
+//                   <RadioGroupItem
+//                     value="male"
+//                     id="male"
+//                     className="text-teal-500"
+//                   />
+//                   <Label
+//                     htmlFor="male"
+//                     className="text-teal-100 cursor-pointer"
+//                   >
+//                     Male
+//                   </Label>
+//                 </div>
+//                 <div className="flex items-center space-x-2 bg-stone-800 p-3 rounded-md border border-teal-700/50 flex-1 cursor-pointer hover:bg-stone-700 transition-colors hover:border-teal-500">
+//                   <RadioGroupItem
+//                     value="female"
+//                     id="female"
+//                     className="text-teal-500"
+//                   />
+//                   <Label
+//                     htmlFor="female"
+//                     className="text-teal-100 cursor-pointer"
+//                   >
+//                     Female
+//                   </Label>
+//                 </div>
+//               </RadioGroup>
+//             </div>
+
+//             <Button
+//               onClick={handleMint}
+//               disabled={!name || isMinting}
+//               className="w-full bg-teal-700 hover:bg-teal-600 text-teal-100 py-6 text-lg font-bold tracking-wider transition-all duration-300 hover:scale-102 hover:shadow-glow"
+//             >
+//               CLAIM YOUR CHAMPION
+//             </Button>
+//           </div>
+//         </div>
+
+//         <div className="text-center mt-4 text-teal-200/70 text-sm">
+//           By forging your gladiator, you agree to the laws of Rome and the will
+//           of the gods
+//         </div>
+//       </div>
+
+//       {/* Minting Overlay with enhanced animations */}
+//       {isMinting && (
+//         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+//           <div className="text-center p-8 max-w-md animate-scaleIn">
+//             <div className="mb-6 relative">
+//               <div className="h-24 w-24 mx-auto rounded-full bg-teal-500/20 flex items-center justify-center animate-spin-slow">
+//                 <div className="h-16 w-16 rounded-full bg-teal-500/40 flex items-center justify-center animate-pulse-slow">
+//                   <div className="h-8 w-8 rounded-full bg-teal-500/60 animate-pulse" />
+//                 </div>
+//               </div>
+//               <div className="absolute h-32 w-32 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-teal-500/30 rounded-full animate-ping-slow" />
+//             </div>
+//             <h2 className="text-3xl font-bold text-teal-300 mb-4 animate-glow">
+//               GAIA IS FORGING YOUR CHAMPION
+//             </h2>
+//             <p className="text-teal-100 text-lg">
+//               The Earth Mother breathes life into your gladiator. Soon you will
+//               enter the arena and write your legend in blood and glory.
+//             </p>
+//           </div>
+//         </div>
+//       )}
+
+//       {/* Wallet Connection Overlay with animations */}
+//       {!userAddress && (
+//         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+//           <div className="bg-stone-900/90 border-2 border-teal-700 rounded-lg p-8 max-w-md text-center animate-scaleIn">
+//             <Wallet className="h-16 w-16 text-teal-500 mx-auto mb-4 animate-float" />
+//             <h2 className="text-3xl font-bold text-teal-300 mb-3">
+//               CONNECT YOUR WALLET
+//             </h2>
+//             <p className="text-teal-100 text-lg mb-6">
+//               To forge your champion and enter the Colosseum, you must first
+//               connect your wallet.
+//             </p>
+//             <div className="flex justify-center animate-pulse-slow">
+//               <ConnectButton />
+//             </div>
+//             <p className="text-teal-200/70 text-sm mt-4">
+//               Your glory awaits behind the veil of the blockchain
+//             </p>
+//           </div>
+//         </div>
+//       )}
+
+//       {/* Add global styles for custom animations */}
+//       <style jsx global>{`
+//         @keyframes breathe {
+//           0%,
+//           100% {
+//             opacity: 0.3;
+//           }
+//           50% {
+//             opacity: 0.7;
+//           }
+//         }
+
+//         @keyframes pulse-slow {
+//           0%,
+//           100% {
+//             opacity: 0.8;
+//           }
+//           50% {
+//             opacity: 1;
+//           }
+//         }
+
+//         @keyframes glow {
+//           0%,
+//           100% {
+//             text-shadow: 0 0 5px rgba(20, 184, 166, 0.5);
+//           }
+//           50% {
+//             text-shadow: 0 0 20px rgba(20, 184, 166, 0.8);
+//           }
+//         }
+
+//         @keyframes fadeIn {
+//           from {
+//             opacity: 0;
+//           }
+//           to {
+//             opacity: 1;
+//           }
+//         }
+
+//         @keyframes scaleIn {
+//           from {
+//             transform: scale(0.9);
+//             opacity: 0;
+//           }
+//           to {
+//             transform: scale(1);
+//             opacity: 1;
+//           }
+//         }
+
+//         @keyframes swing {
+//           0%,
+//           100% {
+//             transform: rotate(-5deg);
+//           }
+//           50% {
+//             transform: rotate(5deg);
+//           }
+//         }
+
+//         @keyframes float {
+//           0%,
+//           100% {
+//             transform: translateY(0);
+//           }
+//           50% {
+//             transform: translateY(-8px);
+//           }
+//         }
+
+//         @keyframes spin-slow {
+//           from {
+//             transform: rotate(0deg);
+//           }
+//           to {
+//             transform: rotate(360deg);
+//           }
+//         }
+
+//         @keyframes ping-slow {
+//           0% {
+//             transform: translate(-50%, -50%) scale(0.8);
+//             opacity: 0.8;
+//           }
+//           70%,
+//           100% {
+//             transform: translate(-50%, -50%) scale(1.3);
+//             opacity: 0;
+//           }
+//         }
+
+//         .animate-pulse-slow {
+//           animation: pulse-slow 3s ease-in-out infinite;
+//         }
+
+//         .animate-glow {
+//           animation: glow 2s ease-in-out infinite;
+//         }
+
+//         .animate-fadeIn {
+//           animation: fadeIn 0.5s ease-out forwards;
+//         }
+
+//         .animate-scaleIn {
+//           animation: scaleIn 0.5s ease-out forwards;
+//         }
+
+//         .animate-swing {
+//           animation: swing 3s ease-in-out infinite;
+//         }
+
+//         .animate-float {
+//           animation: float 3s ease-in-out infinite;
+//         }
+
+//         .animate-spin-slow {
+//           animation: spin-slow 8s linear infinite;
+//         }
+
+//         .animate-ping-slow {
+//           animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+//         }
+
+//         .hover\:scale-102:hover {
+//           transform: scale(1.02);
+//         }
+
+//         .hover\:shadow-glow:hover {
+//           box-shadow: 0 0 15px rgba(20, 184, 166, 0.5);
+//         }
+//       `}</style>
+//     </div>
+//   );
+// }
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,7 +474,6 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 const pinata = new PinataSDK({
@@ -18,27 +481,42 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY,
 });
 
+// Minting stages to track progress
+const MINT_STAGES = {
+  INITIAL: "initial",
+  GENERATING_GLADIATOR: "generating_gladiator",
+  UPLOADING_TO_IPFS: "uploading_to_ipfs",
+  INITIALIZING_GODS: "initializing_gods",
+  MINTING_GODS: "minting_gods",
+  MINTING_GLADIATOR: "minting_gladiator",
+  COMPLETED: "completed",
+  ERROR: "error",
+};
+
 export default function GladiatorOnboarding() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [isMinting, setIsMinting] = useState(false);
+  const [mintStage, setMintStage] = useState(MINT_STAGES.INITIAL);
   const [mintURI, setMintURI] = useState("");
   const [claimed, setClaimed] = useState(false);
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
     undefined
   );
   const [isLoaded, setIsLoaded] = useState(false);
-  const [mintProgress, setMintProgress] = useState("");
-  interface God {
+  const [errorMessage, setErrorMessage] = useState("");
+  const [gladiatorData, setGladiatorData] = useState(null);
+  interface GodData {
     name: string;
     description: string;
-    image?: string;
-    attributes: Array<{ trait_type: string; value: string }>;
-    properties?: Record<string, unknown>;
+    image: string;
+    attributes: any[];
+    properties: any;
   }
-  const [initialGods, setInitialGods] = useState<God[]>([]);
-  const [currentGodIndex, setCurrentGodIndex] = useState(-1);
+
+  const [godsData, setGodsData] = useState<GodData[]>([]);
+  const [currentGodIndex, setCurrentGodIndex] = useState(0);
 
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
@@ -86,232 +564,21 @@ export default function GladiatorOnboarding() {
     };
   }, [refetchClaimBool]);
 
-  // New function to fetch initial gods data
-  async function fetchInitialGods() {
-    try {
-      setMintProgress("Summoning the gods from Olympus...");
-      const celRes = await fetch("/api/celestial/init", {
-        method: "POST",
-      });
-
-      if (!celRes.ok) {
-        throw new Error("Failed to fetch initial gods");
-      }
-
-      const celData = await celRes.json();
-      console.log("Initial Gods (basic data):", celData);
-
-      if (!celData || !Array.isArray(celData) || celData.length === 0) {
-        throw new Error("Failed to generate initial god data");
-      }
-
-      setInitialGods(celData);
-      return celData;
-    } catch (error) {
-      console.error("Error fetching initial gods:", error);
-      setMintProgress("Failed to summon the gods. Try again.");
-      throw error;
-    }
-  }
-
-  // New function to generate content for each god sequentially
-  async function generateGodsContent(gods: God[]) {
-    try {
-      const enrichedGods = [...gods];
-
-      for (let i = 0; i < gods.length; i++) {
-        setCurrentGodIndex(i);
-        setMintProgress(`Breathing life into ${gods[i].name}...`);
-
-        // Call a new API endpoint to generate content for this specific god
-        const res = await fetch("/api/celestial/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: gods[i].name,
-            type:
-              gods[i].attributes.find((a) => a.trait_type === "Type")?.value ||
-              "",
-            description: gods[i].description,
-            spells: Object.fromEntries(
-              gods[i].attributes
-                .filter((a) =>
-                  ["Attack", "Defense", "Special"].includes(a.trait_type)
-                )
-                .map((a) => [a.trait_type, a.value])
-            ),
-            buffs: Object.fromEntries(
-              gods[i].attributes
-                .filter((a) =>
-                  ["Strength", "Wisdom", "Charisma"].includes(a.trait_type)
-                )
-                .map((a) => [a.trait_type, a.value])
-            ),
-          }),
-        });
-
-        if (!res.ok) {
-          throw new Error(`Failed to generate content for ${gods[i].name}`);
-        }
-
-        const contentData = await res.json();
-        enrichedGods[i] = {
-          ...gods[i],
-          description: contentData.description || gods[i].description,
-          image: contentData.image || gods[i].image,
-        };
-      }
-
-      setCurrentGodIndex(-1);
-      return enrichedGods;
-    } catch (error) {
-      console.error("Error generating gods content:", error);
-      setMintProgress("The gods are displeased. Try again.");
-      throw error;
-    }
-  }
-
-  // New function to mint each god
-  async function mintGods(gods: God[]) {
-    try {
-      for (let i = 0; i < gods.length; i++) {
-        setCurrentGodIndex(i);
-        setMintProgress(`Forging ${gods[i].name} into reality...`);
-
-        const res = await fetch("/api/celestial/mintInit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: gods[i].name,
-            description: gods[i].description,
-            imageUrl: gods[i].image,
-            attributes: gods[i].attributes,
-            properties: gods[i].properties,
-            address: address,
-          }),
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(
-            `Failed to mint ${gods[i].name}: ${errorData.message || "Unknown error"}`
-          );
-        }
-
-        const data = await res.json();
-        console.log(`Minted ${gods[i].name}:`, data);
-
-        // Add a small delay between transactions to ensure proper sequencing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-      }
-
-      setCurrentGodIndex(-1);
-      setMintProgress("The gods have blessed your journey!");
-    } catch (error) {
-      console.error("Error minting gods:", error);
-      setMintProgress("The offering was rejected. Try again.");
-      throw error;
-    }
-  }
-
-  async function handleMint() {
-    console.log("Minting...");
-    setIsMinting(true);
-
-    try {
-      // Step 1: Generate and upload gladiator data
-      setMintProgress("Forging your champion...");
-      const res = await fetch("/api/gladiator/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, gender }),
-      });
-      const data = await res.json();
-      console.log("Backend response:", data);
-
-      if (!data.success) {
-        throw new Error("Failed to generate gladiator data");
-      }
-
-      setMintProgress("Inscribing your legend in the stars...");
-      const pinataRes = await pinata.upload.json(data);
-      const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
-      console.log("File uploaded to IPFS:", ipfsUrl);
-
-      setMintURI(ipfsUrl);
-
-      // Step 2: Get ONLY the basic celestial data (ultra lightweight)
-      setMintProgress("Summoning the gods...");
-      const celRes = await fetch("/api/celestial/init", {
-        method: "POST",
-      });
-
-      if (!celRes.ok) {
-        throw new Error("Failed to fetch celestial data");
-      }
-
-      const rawGodsData = await celRes.json();
-      console.log("Raw Gods Data:", rawGodsData);
-
+  // Process next God in the queue
+  useEffect(() => {
+    const processNextGod = async () => {
       if (
-        !rawGodsData ||
-        !Array.isArray(rawGodsData) ||
-        rawGodsData.length === 0
+        mintStage === MINT_STAGES.MINTING_GODS &&
+        godsData.length > 0 &&
+        currentGodIndex < godsData.length
       ) {
-        throw new Error("Failed to get initial god data");
-      }
-
-      // Step 3: Process each god completely on the client side
-      const processedGods = [];
-      for (let i = 0; i < rawGodsData.length; i++) {
-        const god = rawGodsData[i];
-        setMintProgress(
-          `Bringing ${god.name} to life (${i + 1}/${rawGodsData.length})...`
-        );
-
         try {
-          // Process each god individually
-          const godRes = await fetch("/api/celestial/process", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(god),
-          });
+          const god = godsData[currentGodIndex];
+          console.log(
+            `Minting god ${currentGodIndex + 1}/${godsData.length}: ${god.name}`
+          );
 
-          if (!godRes.ok) {
-            console.error(`Error processing ${god.name}`);
-            continue; // Try to continue with the next god
-          }
-
-          const processedGod = await godRes.json();
-          processedGods.push(processedGod);
-
-          // Add a small delay between processing
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (err) {
-          console.error(`Error processing ${god.name}:`, err);
-          // Continue with the next god anyway
-        }
-      }
-
-      console.log("All processed gods:", processedGods);
-
-      // Step 4: Mint each god
-      for (let i = 0; i < processedGods.length; i++) {
-        const god = processedGods[i];
-        setMintProgress(
-          `Minting ${god.name} (${i + 1}/${processedGods.length})...`
-        );
-
-        try {
-          const mintRes = await fetch("/api/celestial/mintInit", {
+          const res = await fetch("/api/celestial/mintInit", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -326,48 +593,167 @@ export default function GladiatorOnboarding() {
             }),
           });
 
-          if (!mintRes.ok) {
-            console.error(`Error minting ${god.name}`);
-            continue; // Try to continue with the next god
+          const data = await res.json();
+          console.log("Server Response for god mint:", data);
+
+          // Move to the next god
+          setCurrentGodIndex(currentGodIndex + 1);
+
+          // If this was the last god, move to minting the gladiator
+          if (currentGodIndex === godsData.length - 1) {
+            setTimeout(() => {
+              setMintStage(MINT_STAGES.MINTING_GLADIATOR);
+              mintGladiator();
+            }, 2000);
           }
-
-          const mintData = await mintRes.json();
-          console.log(`${god.name} minted:`, mintData);
-
-          // Add a delay between minting operations
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-        } catch (err) {
-          console.error(`Error minting ${god.name}:`, err);
-          // Continue with the next god anyway
+        } catch (error) {
+          console.error("Error minting god:", error);
+          setErrorMessage("Failed to mint celestial");
+          setMintStage(MINT_STAGES.ERROR);
+          setIsMinting(false);
         }
       }
+    };
 
-      // Step 5: Finally mint the gladiator
-      setMintProgress("Bringing your gladiator to life...");
+    processNextGod();
+  }, [mintStage, godsData, currentGodIndex, address]);
+
+  // Function to mint the gladiator NFT after gods are minted
+  const mintGladiator = async () => {
+    try {
       const tx = await writeContractAsync({
         abi: gladiatorAbi,
         address: gladiatorAddress,
         functionName: "mintGladiator",
-        args: [ipfsUrl],
+        args: [mintURI],
       });
 
       console.log("Minting transaction:", tx);
       if (tx) {
         console.log("Minting completed successfully!");
-        setMintProgress("Your champion awaits in the arena!");
+        setMintStage(MINT_STAGES.COMPLETED);
         setTimeout(() => {
           setIsMinting(false);
           router.push("/dashboard");
         }, 2000);
       }
     } catch (error) {
-      console.error("Error in the minting process:", error);
-      setMintProgress("The gods have turned their backs on you. Try again.");
-      setTimeout(() => {
-        setIsMinting(false);
-      }, 3000);
+      console.error("Error minting gladiator:", error);
+      setErrorMessage("Failed to mint gladiator");
+      setMintStage(MINT_STAGES.ERROR);
+      setIsMinting(false);
+    }
+  };
+
+  // Main function to start the minting process
+  async function handleMint() {
+    console.log("Starting minting process...");
+    setIsMinting(true);
+    setMintStage(MINT_STAGES.GENERATING_GLADIATOR);
+    setErrorMessage("");
+
+    try {
+      // Step 1: Generate gladiator data
+      const res = await fetch("/api/gladiator/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, gender }),
+      });
+
+      const data = await res.json();
+      console.log("Backend response for gladiator generation:", data);
+
+      if (!data.success) {
+        throw new Error("Failed to generate gladiator data");
+      }
+
+      setGladiatorData(data);
+
+      // Step 2: Upload to IPFS
+      setMintStage(MINT_STAGES.UPLOADING_TO_IPFS);
+      const pinataRes = await pinata.upload.json(data);
+      const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
+      console.log("File uploaded to IPFS:", ipfsUrl);
+      setMintURI(ipfsUrl);
+
+      // Step 3: Initialize gods
+      setMintStage(MINT_STAGES.INITIALIZING_GODS);
+      const celRes = await fetch("/api/celestial/init", {
+        method: "POST",
+      });
+
+      const celData = await celRes.json();
+      console.log("Initial Gods:", celData);
+
+      if (!celData) {
+        throw new Error("Failed to generate initial god data");
+      }
+
+      setGodsData(celData);
+
+      // Step 4: Start minting gods (the useEffect will handle this)
+      setMintStage(MINT_STAGES.MINTING_GODS);
+      setCurrentGodIndex(0);
+
+      // The rest will be handled by the useEffect hooks
+    } catch (error) {
+      console.error("Error during minting process:", error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed to complete minting process"
+      );
+      setMintStage(MINT_STAGES.ERROR);
+      setIsMinting(false);
     }
   }
+
+  // Get status message based on current minting stage
+  const getMintingStatusMessage = () => {
+    switch (mintStage) {
+      case MINT_STAGES.GENERATING_GLADIATOR:
+        return "GAIA IS FORGING YOUR CHAMPION";
+      case MINT_STAGES.UPLOADING_TO_IPFS:
+        return "RECORDING YOUR LEGEND IN THE ETERNAL ARCHIVES";
+      case MINT_STAGES.INITIALIZING_GODS:
+        return "THE OLYMPIANS TAKE NOTICE OF YOUR ARRIVAL";
+      case MINT_STAGES.MINTING_GODS:
+        return `BLESSING OF THE GODS (${currentGodIndex + 1}/${godsData.length})`;
+      case MINT_STAGES.MINTING_GLADIATOR:
+        return "YOUR CHAMPION ENTERS THE COLOSSEUM";
+      case MINT_STAGES.COMPLETED:
+        return "CHAMPION FORGED! REDIRECTING...";
+      case MINT_STAGES.ERROR:
+        return "THE GODS FROWN UPON THIS ATTEMPT";
+      default:
+        return "GAIA IS FORGING YOUR CHAMPION";
+    }
+  };
+
+  const getMintingStatusDescription = () => {
+    switch (mintStage) {
+      case MINT_STAGES.GENERATING_GLADIATOR:
+        return "The Earth Mother breathes life into your gladiator. Soon you will enter the arena and write your legend in blood and glory.";
+      case MINT_STAGES.UPLOADING_TO_IPFS:
+        return "Your champion's essence is being etched into the cosmic ledger, ensuring their legend will transcend time.";
+      case MINT_STAGES.INITIALIZING_GODS:
+        return "The Olympians gather to witness your champion's birth. Each will bestow their unique blessings.";
+      case MINT_STAGES.MINTING_GODS:
+        return godsData[currentGodIndex]
+          ? `${godsData[currentGodIndex]?.name} bestows their divine favor upon you.`
+          : "The gods are bestowing their blessings upon you.";
+      case MINT_STAGES.MINTING_GLADIATOR:
+        return "Your gladiator takes their first steps into the arena. Glory awaits.";
+      case MINT_STAGES.COMPLETED:
+        return "Your champion has been forged successfully! Preparing the arena for your arrival...";
+      case MINT_STAGES.ERROR:
+        return errorMessage || "Something went wrong. Please try again.";
+      default:
+        return "The Earth Mother breathes life into your gladiator. Soon you will enter the arena and write your legend in blood and glory.";
+    }
+  };
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0b060a]">
@@ -487,7 +873,7 @@ export default function GladiatorOnboarding() {
         </div>
       </div>
 
-      {/* Enhanced Minting Overlay with progress status */}
+      {/* Minting Overlay with enhanced animations and dynamic content based on stage */}
       {isMinting && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
           <div className="text-center p-8 max-w-md animate-scaleIn">
@@ -500,42 +886,34 @@ export default function GladiatorOnboarding() {
               <div className="absolute h-32 w-32 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-teal-500/30 rounded-full animate-ping-slow" />
             </div>
             <h2 className="text-3xl font-bold text-teal-300 mb-4 animate-glow">
-              GAIA IS FORGING YOUR CHAMPION
+              {getMintingStatusMessage()}
             </h2>
-            <p className="text-teal-100 text-lg mb-3">
-              {mintProgress ||
-                "The Earth Mother breathes life into your gladiator..."}
+            <p className="text-teal-100 text-lg">
+              {getMintingStatusDescription()}
             </p>
 
-            {/* God progress indicators */}
-            {initialGods.length > 0 && currentGodIndex >= 0 && (
-              <div className="mt-4">
-                <div className="flex justify-center space-x-2 mt-2">
-                  {initialGods.map((god, index) => (
-                    <div
-                      key={index}
-                      className={`h-3 w-3 rounded-full ${
-                        index < currentGodIndex
-                          ? "bg-teal-500"
-                          : index === currentGodIndex
-                            ? "bg-teal-300 animate-pulse"
-                            : "bg-teal-900"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className="text-teal-200/70 text-sm mt-2">
-                  {currentGodIndex >= 0 && initialGods[currentGodIndex]
-                    ? `Summoning ${initialGods[currentGodIndex].name}...`
-                    : "Preparing the divine assembly..."}
-                </p>
-              </div>
+            {mintStage === MINT_STAGES.ERROR && (
+              <Button
+                onClick={() => {
+                  setIsMinting(false);
+                  setMintStage(MINT_STAGES.INITIAL);
+                }}
+                className="mt-6 bg-teal-700 hover:bg-teal-600 text-teal-100 py-2 px-4 font-bold rounded-md transition-all duration-300"
+              >
+                TRY AGAIN
+              </Button>
             )}
 
-            <p className="text-teal-200/70 text-sm mt-4">
-              Soon you will enter the arena and write your legend in blood and
-              glory
-            </p>
+            {mintStage === MINT_STAGES.MINTING_GODS && (
+              <div className="mt-4 w-full bg-stone-800 rounded-full h-2.5">
+                <div
+                  className="bg-teal-500 h-2.5 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${(currentGodIndex / godsData.length) * 100}%`,
+                  }}
+                ></div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -562,6 +940,7 @@ export default function GladiatorOnboarding() {
         </div>
       )}
 
+      {/* Add global styles for custom animations */}
       <style jsx global>{`
         @keyframes breathe {
           0%,
