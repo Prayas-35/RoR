@@ -220,12 +220,8 @@ export default function GladiatorOnboarding() {
 
   async function handleMint() {
     console.log("Minting...");
-    // if (claimed) {
-    //   console.error("Error: Already Claimed.");
-    //   return;
-    // }
-
     setIsMinting(true);
+
     try {
       // Step 1: Generate and upload gladiator data
       setMintProgress("Forging your champion...");
@@ -250,28 +246,114 @@ export default function GladiatorOnboarding() {
 
       setMintURI(ipfsUrl);
 
-      // Step 2: Fetch basic celestial data
-      const gods = await fetchInitialGods();
+      // Step 2: Get ONLY the basic celestial data (ultra lightweight)
+      setMintProgress("Summoning the gods...");
+      const celRes = await fetch("/api/celestial/init", {
+        method: "POST",
+      });
 
-      // Step 3: Generate detailed content for each god
-      const enrichedGods = await generateGodsContent(gods);
+      if (!celRes.ok) {
+        throw new Error("Failed to fetch celestial data");
+      }
 
-      // Step 4: Mint each celestial NFT
-      await mintGods(enrichedGods);
+      const rawGodsData = await celRes.json();
+      console.log("Raw Gods Data:", rawGodsData);
 
-      // Step 5: Mint the gladiator NFT
-      setMintProgress("Birthing your gladiator into the Colosseum...");
+      if (
+        !rawGodsData ||
+        !Array.isArray(rawGodsData) ||
+        rawGodsData.length === 0
+      ) {
+        throw new Error("Failed to get initial god data");
+      }
+
+      // Step 3: Process each god completely on the client side
+      const processedGods = [];
+      for (let i = 0; i < rawGodsData.length; i++) {
+        const god = rawGodsData[i];
+        setMintProgress(
+          `Bringing ${god.name} to life (${i + 1}/${rawGodsData.length})...`
+        );
+
+        try {
+          // Process each god individually
+          const godRes = await fetch("/api/celestial/process", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(god),
+          });
+
+          if (!godRes.ok) {
+            console.error(`Error processing ${god.name}`);
+            continue; // Try to continue with the next god
+          }
+
+          const processedGod = await godRes.json();
+          processedGods.push(processedGod);
+
+          // Add a small delay between processing
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (err) {
+          console.error(`Error processing ${god.name}:`, err);
+          // Continue with the next god anyway
+        }
+      }
+
+      console.log("All processed gods:", processedGods);
+
+      // Step 4: Mint each god
+      for (let i = 0; i < processedGods.length; i++) {
+        const god = processedGods[i];
+        setMintProgress(
+          `Minting ${god.name} (${i + 1}/${processedGods.length})...`
+        );
+
+        try {
+          const mintRes = await fetch("/api/celestial/mintInit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: god.name,
+              description: god.description,
+              imageUrl: god.image,
+              attributes: god.attributes,
+              properties: god.properties,
+              address: address,
+            }),
+          });
+
+          if (!mintRes.ok) {
+            console.error(`Error minting ${god.name}`);
+            continue; // Try to continue with the next god
+          }
+
+          const mintData = await mintRes.json();
+          console.log(`${god.name} minted:`, mintData);
+
+          // Add a delay between minting operations
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        } catch (err) {
+          console.error(`Error minting ${god.name}:`, err);
+          // Continue with the next god anyway
+        }
+      }
+
+      // Step 5: Finally mint the gladiator
+      setMintProgress("Bringing your gladiator to life...");
       const tx = await writeContractAsync({
         abi: gladiatorAbi,
         address: gladiatorAddress,
         functionName: "mintGladiator",
         args: [ipfsUrl],
       });
+
       console.log("Minting transaction:", tx);
       if (tx) {
         console.log("Minting completed successfully!");
-        // The transaction hash is returned, we can use it to track the transaction
-        console.log("Transaction hash:", tx);
         setMintProgress("Your champion awaits in the arena!");
         setTimeout(() => {
           setIsMinting(false);
@@ -279,9 +361,8 @@ export default function GladiatorOnboarding() {
         }, 2000);
       }
     } catch (error) {
-      console.error("Error minting gladiator:", error);
+      console.error("Error in the minting process:", error);
       setMintProgress("The gods have turned their backs on you. Try again.");
-      // Wait a moment before removing the overlay
       setTimeout(() => {
         setIsMinting(false);
       }, 3000);
