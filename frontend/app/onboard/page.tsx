@@ -10,21 +10,65 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { config } from "@/lib/config";
+import { generatedGladiatorData } from "@/types/types";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
   pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY,
 });
 
+async function generateGladiator({
+  name,
+  gender,
+}: {
+  name: string;
+  gender: string;
+}) {
+  const res = await fetch("/api/gladiator/generate/description", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, gender }),
+  });
+  let data = await res.json();
+
+  // dividing for better api call
+  const imgRes = await fetch("/api/gladiator/generate/imageGen", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ description: data.description }),
+  });
+  const imageData = await imgRes.json();
+  if (!imageData.success) {
+    throw new Error("Failed to generate image");
+  }
+  data.imageUrl = imageData.imageUrl;
+  data.success = true;
+  console.log("Image generation response:", imageData);
+  console.log("Generated gladiator data:", data);
+  if (!data.success) {
+    throw new Error("Failed to generate gladiator data");
+  }
+  return data;
+}
+
+async function uploadToPinata(data: generatedGladiatorData) {
+  const pinataRes = await pinata.upload.json(data);
+  const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
+  console.log("File uploaded to IPFS:", ipfsUrl);
+  return ipfsUrl;
+}
+
 export default function GladiatorOnboarding() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [isMinting, setIsMinting] = useState(false);
-  const [mintURI, setMintURI] = useState("");
   const [claimed, setClaimed] = useState(false);
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
     undefined
@@ -35,7 +79,7 @@ export default function GladiatorOnboarding() {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  const { data, refetch: refetchClaimBool } = useReadContract({
+  const { refetch: refetchClaimBool } = useReadContract({
     abi: gladiatorAbi,
     address: gladiatorAddress,
     functionName: "hasClaimedNFT",
@@ -70,7 +114,7 @@ export default function GladiatorOnboarding() {
           console.error("Error during claim check: ", error);
           setClaimed(false);
         });
-    }, 5000);
+    }, 15000);
 
     return () => {
       console.log("Clearing refetch interval.\n");
@@ -87,23 +131,17 @@ export default function GladiatorOnboarding() {
 
     setIsMinting(true);
     try {
-      const res = await fetch("/api/gladiator/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, gender }),
+      const data = await generateGladiator({
+        name: name,
+        gender: gender,
       });
-      const data = await res.json();
       console.log("Backend response:", data);
 
       if (!data.success) {
         throw new Error("Failed to generate gladiator data");
       }
 
-      const pinataRes = await pinata.upload.json(data);
-      const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
-      console.log("File uploaded to IPFS:", ipfsUrl);
+      const ipfsUrl = await uploadToPinata(data);
 
       const celestials = config.celestials;
       const initialCelestials = celestials
@@ -131,9 +169,11 @@ export default function GladiatorOnboarding() {
       setCelResponse(celestialResponses);
 
       // Mint celestial NFTs sequentially
-      console.log("Celestial response array length:", celestialResponses.length);
+      console.log(
+        "Celestial response array length:",
+        celestialResponses.length
+      );
       for (const god of celestialResponses) {
-        console.log("God data:", god);
         const res = await fetch("/api/celestial/mintInit", {
           method: "POST",
           headers: {
@@ -213,8 +253,9 @@ export default function GladiatorOnboarding() {
 
       {/* Content with fade-in animation */}
       <div
-        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${
+          isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-teal-300 mb-2 tracking-wide animate-pulse-slow">
