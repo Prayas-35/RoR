@@ -45,15 +45,6 @@ export default function GladiatorOnboarding() {
   }, [address]);
 
   useEffect(() => {
-    // Set the loaded state after a small delay to trigger animations
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     console.log(
       "Setting up refetch interval for fetching if gladiator alr claimed:"
     );
@@ -134,8 +125,8 @@ export default function GladiatorOnboarding() {
         const data = await res.json();
         console.log("Server Response:", data);
 
-        // Add a small delay between transactions to ensure proper sequencing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // // Add a small delay between transactions to ensure proper sequencing
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
       }
 
       const tx = await writeContractAsync({
