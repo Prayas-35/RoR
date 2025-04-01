@@ -33,7 +33,7 @@ async function generateGladiator({
     },
     body: JSON.stringify({ name, gender }),
   });
-  let data = await res.json();
+  const data = await res.json();
 
   // dividing for better api call
   const imgRes = await fetch("/api/gladiator/generate/imageGen", {
