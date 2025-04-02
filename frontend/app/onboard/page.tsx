@@ -13,6 +13,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/navigation";
 import { config } from "@/lib/config";
 import { generatedGladiatorData } from "@/types/types";
+import { genCelestial } from "@/functions/genCelestial";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
@@ -62,37 +63,6 @@ async function uploadToPinata(data: generatedGladiatorData) {
   const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
   console.log("File uploaded to IPFS:", ipfsUrl);
   return ipfsUrl;
-}
-
-async function celestialData(celestial: any) {
-  const celRes = await fetch("/api/celestial/init/descGen", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ celestial: celestial }),
-  });
-  const res = await celRes.json();
-
-  if (!res.success) {
-    throw new Error("Failed to generate celestial data");
-  }
-
-  const imageRes = await fetch("/api/celestial/init/imageGen", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ celestial: res }),
-  });
-  const imageData = await imageRes.json();
-
-  if (!imageData.success) {
-    throw new Error("Failed to generate celestial image");
-  }
-  res.image = imageData.image;
-  res.success = true;
-  return res;
 }
 
 export default function GladiatorOnboarding() {
@@ -180,9 +150,9 @@ export default function GladiatorOnboarding() {
 
       const celestialResponses = await Promise.all(
         initialCelestials.map(async (c) => {
-          const celRes = await celestialData(c);
+          const celRes = await genCelestial(c);
           console.log("Celestial response:", celRes);
-          if (!celRes.success) {
+          if (!celRes.name || !celRes.description || !celRes.image) {
             throw new Error("Failed to generate celestial data");
           }
           return celRes;
@@ -273,9 +243,8 @@ export default function GladiatorOnboarding() {
 
       {/* Content with fade-in animation */}
       <div
-        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${
-          isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
+        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-teal-300 mb-2 tracking-wide animate-pulse-slow">
