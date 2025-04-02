@@ -3,7 +3,7 @@ import Groq from "groq-sdk";
 const model =
   process.env.GROQ_MODEL ||
   process.env.NEXT_PUBLIC_GROQ_MODEL ||
-  "deepseek-r1-distill-qwen-32b";
+  "llama-3.3-70b-versatile";
 
 const groq = new Groq({
   apiKey:
@@ -18,9 +18,9 @@ async function generate(prompt: string): Promise<string> {
   });
   const contentWithThoughts = response.choices[0].message.content;
   // const contentWithoutThoughts = contentWithThoughts?.replace(/<think>.*?<\/think>/g, "");
-  const contentWithoutThoughts = contentWithThoughts
-    ?.split("</think>")[1]
-    .trim();
+  const contentWithoutThoughts = contentWithThoughts;
+  // ?.split("</think>")[1]
+  // .trim();
   console.log("Content without thoughts:", contentWithoutThoughts);
   return contentWithoutThoughts ?? "";
 }
