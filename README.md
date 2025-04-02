@@ -1,10 +1,12 @@
 # Ruins of Rome
 
 Deployed on B3 Testnet:
+```
 Celestial Contract Address: 0xE3186d5BfF0Bd7f6aa46089c229c375102157469
 https://b3-testnet.explorer.caldera.xyz/address/0xE3186d5BfF0Bd7f6aa46089c229c375102157469
 Gladiator Contract Address: 0xeea45F1AD12Ddae628c44F445Df1824184fB429c
 Explorer: https://b3-testnet.explorer.caldera.xyz/address/0xeea45F1AD12Ddae628c44F445Df1824184fB429c
+```
 
 # ABOUT
 
@@ -24,4 +26,22 @@ We could not deploy the game to a live link due to certain rate limits on platfo
 
 Follow these steps:
 
-1. Clone this repository
+1. Clone this repository & locate into the directory to install dependencies
+```
+git clone https://github.com/Prayas-35/RoR
+cd RoR
+npm install --legacy-peer-deps
+```
+
+2. Make a ``` .env.local ``` file
+```
+cp env.example env.local
+```
+
+3. Once your env is ready to go, start your local server:
+```
+npm run dev
+```
+
+Play around the website!
+Thanks.
