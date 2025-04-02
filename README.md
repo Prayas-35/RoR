@@ -3,6 +3,7 @@
 Deployed on B3 Testnet:
 
 `Celestial Contract Address: 0xE3186d5BfF0Bd7f6aa46089c229c375102157469` [Explorer](https://b3-testnet.explorer.caldera.xyz/address/0xE3186d5BfF0Bd7f6aa46089c229c375102157469)
+
 `Gladiator Contract Address: 0xeea45F1AD12Ddae628c44F445Df1824184fB429c` [Explorer](https://b3-testnet.explorer.caldera.xyz/address/0xeea45F1AD12Ddae628c44F445Df1824184fB429c)
 
 
