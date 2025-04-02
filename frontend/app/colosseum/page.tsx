@@ -1391,7 +1391,8 @@ export default function GladiatorBattle() {
             The Gladiators
           </h2>
           <p className="text-center text-gray-300 mb-8">
-            Today's match: {playerCharacter.name} vs {aiOpponent.character.name}
+            Today&apos;s match: {playerCharacter.name} vs{" "}
+            {aiOpponent.character.name}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
