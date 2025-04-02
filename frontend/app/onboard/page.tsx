@@ -155,10 +155,6 @@ export default function GladiatorOnboarding() {
 
   async function handleMint() {
     console.log("Minting...");
-    // if (claimed) {
-    //   console.error("Error: Already Claimed.");
-    //   return;
-    // }
 
     setIsMinting(true);
     try {
