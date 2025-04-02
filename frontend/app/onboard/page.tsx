@@ -243,8 +243,9 @@ export default function GladiatorOnboarding() {
 
       {/* Content with fade-in animation */}
       <div
-        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${
+          isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-teal-300 mb-2 tracking-wide animate-pulse-slow">
