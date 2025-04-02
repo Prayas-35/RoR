@@ -8,7 +8,7 @@ deploy_Gladiator:
 	npx hardhat run ignition/modules/gladiator.ts --network b3-testnet
 
 verify_Celestial:
-	npx hardhat verify --network b3-testnet 0x49E8c60458f7938D63164D2c115E07D58a64De64
+	npx hardhat verify --network b3-testnet 0xE3186d5BfF0Bd7f6aa46089c229c375102157469
 
 verify_Gladiator:
-	npx hardhat verify --network b3-testnet 0xe8B3752d45b29dE75e2A164028FD0a5238aFC507
+	npx hardhat verify --network b3-testnet 0xeea45F1AD12Ddae628c44F445Df1824184fB429c

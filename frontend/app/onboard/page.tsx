@@ -196,7 +196,7 @@ export default function GladiatorOnboarding() {
       setCelResponse(celestialResponses);
 
       // Mint celestial NFTs sequentially
-
+      console.log("Minting Celestial NFTs...");
       for (const god of celestialResponses) {
         const res = await fetch("/api/celestial/mintInit", {
           method: "POST",

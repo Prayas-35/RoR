@@ -1,7 +1,7 @@
-import { generate } from "@/functions/generate";
+// import { generate } from "@/functions/generate";
 import { parseUntilJson } from "@/functions/parseUntilJson";
 import { NextRequest, NextResponse } from "next/server";
-import { generateImage as generateImageFunction } from "@/functions/generate";
+import { generate } from "@/functions/generate";
 
 const COLORS = [
   "blue",
