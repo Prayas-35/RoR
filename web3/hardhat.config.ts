@@ -1,37 +1,43 @@
-import type { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox-viem";
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
+import "dotenv/config";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-verify";
-import "dotenv/config";
 
-const { PRIVATE_KEY } = process.env;
+const { RPC_URL_FUJI, RPC_URL_EDUCHAIN, PRIVATE_KEY, FUJI_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.29",
+  solidity: "0.8.28",
   networks: {
-    "b3-testnet": {
-      url: "https://b3-testnet.rpc.caldera.xyz/http",
-      chainId: 1993,
+    fuji: {
+      url: `${RPC_URL_FUJI}`,
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 43113,
+    },
+    eduChain: {
+      url: RPC_URL_EDUCHAIN,
+      chainId: 656476,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
   },
   etherscan: {
     apiKey: {
-      "b3-testnet": "empty",
+      avalancheFujiTestnet: `${FUJI_API_KEY}`,
+      'eduChain': 'empty'
     },
     customChains: [
       {
-        network: "b3-testnet",
-        chainId: 1993,
+        network: "eduChain",
+        chainId: 656476,
         urls: {
-          apiURL: "https://b3-testnet.explorer.caldera.xyz/api",
-          browserURL: "https://b3-testnet.explorer.caldera.xyz",
-        },
-      },
-    ],
+          apiURL: "https://edu-chain-testnet.blockscout.com/api",
+          browserURL: "https://edu-chain-testnet.blockscout.com"
+        }
+      }
+    ]
   },
   sourcify: {
-    enabled: false,
+    enabled: true,
   },
 };
 

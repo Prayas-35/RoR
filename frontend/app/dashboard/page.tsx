@@ -1,27 +1,16 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useAccount, useReadContract } from "wagmi";
-import { gladiatorAbi, gladiatorAddress } from "../abi";
-import Navbar from "@/components/Navbar";
+import Image from "next/image"
+import { useEffect, useState } from "react"
+import { useAccount, useReadContract } from "wagmi"
+import { gladiatorAbi, gladiatorAddress } from "../abi"
+import Navbar from "@/components/Navbar"
+
 
 export default function Home() {
   const { address } = useAccount();
-  type GladiatorMetadata = {
-    name: string;
-    backstory: string;
-    attackValue: number;
-    defenceValue: number;
-    speedValue: number;
-    gender: string;
-    moveset: string[];
-    imageUrl: string;
-  };
-
-  const [gladiatorMetadata, setGladiatorMetadata] =
-    useState<GladiatorMetadata | null>(null);
-  const { data: gladiatorData } = useReadContract({
+  const [gladiatorMetadata, setGladiatorMetadata] = useState<any>(null);
+  const { data: gladiatorData }: { data: any[] | undefined } = useReadContract({
     abi: gladiatorAbi,
     address: gladiatorAddress,
     functionName: "getGladiatorForPlayer",
@@ -32,14 +21,14 @@ export default function Home() {
     const metadata = await fetch(uri);
     const metadataJson = await metadata.json();
     return metadataJson;
-  };
+  }
 
   useEffect(() => {
     const fetchMetadata = async () => {
       if (address && gladiatorData) {
         console.log("Address: ", address);
         console.log("Gladiator Data: ", gladiatorData);
-        const uri = gladiatorData.toString();
+        const uri = gladiatorData[1].toString();
         try {
           const metadata = await processGladiatorData(uri);
           console.log("Metadata: ", metadata);
@@ -51,6 +40,7 @@ export default function Home() {
     };
 
     fetchMetadata();
+
   }, [address, gladiatorData]);
   return (
     <div className="relative min-h-screen bg-[#2a2c31] overflow-hidden">
@@ -61,6 +51,7 @@ export default function Home() {
       </div>
 
       <div className="relative z-10 pt-20 flex flex-col min-h-screen">
+
         {/* Main content */}
         <main className="container mx-auto px-6 flex-grow flex flex-col md:flex-row">
           {/* Left content */}
@@ -69,9 +60,7 @@ export default function Home() {
               <div className="absolute -z-10 text-[#3a3c41] text-[12rem] font-bold leading-none -top-20 -left-6">
                 {gladiatorMetadata?.name.toUpperCase()}
               </div>
-              <h1 className="text-white text-6xl md:text-7xl font-bold mb-6">
-                {gladiatorMetadata?.name}
-              </h1>
+              <h1 className="text-white text-6xl md:text-7xl font-bold mb-6">{gladiatorMetadata?.name}</h1>
               <p className="text-gray-300 mb-8 max-w-md">
                 {gladiatorMetadata?.backstory}
               </p>
@@ -80,58 +69,52 @@ export default function Home() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 pe-10">
                 <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
                   <div className="text-gray-400 text-sm mb-1">Attack</div>
-                  <div className="text-white text-2xl font-bold">
-                    {gladiatorMetadata?.attackValue}
-                  </div>
+                  <div className="text-white text-2xl font-bold">{Math.round(gladiatorMetadata?.attackValue)}</div>
                 </div>
                 <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
                   <div className="text-gray-400 text-sm mb-1">Defense</div>
-                  <div className="text-white text-2xl font-bold">
-                    {gladiatorMetadata?.defenceValue}
-                  </div>
+                  <div className="text-white text-2xl font-bold">{Math.round(gladiatorMetadata?.defenceValue)}</div>
                 </div>
                 <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
                   <div className="text-gray-400 text-sm mb-1">Speed</div>
-                  <div className="text-white text-2xl font-bold">
-                    {gladiatorMetadata?.speedValue}
-                  </div>
+                  <div className="text-white text-2xl font-bold">{Math.round(gladiatorMetadata?.speedValue)}</div>
+                </div>
+                <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
+                  <div className="text-gray-400 text-sm mb-1">XP</div>
+                  <div className="text-white text-2xl font-bold">{gladiatorMetadata?.xp}</div>
+                </div>
+                <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
+                  <div className="text-gray-400 text-sm mb-1">MXP</div>
+                  <div className="text-white text-2xl font-bold">{gladiatorMetadata?.mxp}</div>
                 </div>
                 <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
                   <div className="text-gray-400 text-sm mb-1">Gender</div>
-                  <div className="text-white text-2xl font-bold capitalize">
-                    {gladiatorMetadata?.gender}
-                  </div>
+                  <div className="text-white text-2xl font-bold capitalize">{gladiatorMetadata?.gender}</div>
                 </div>
-                <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm">
+                <div className="bg-[#3a3c41]/50 p-4 rounded-lg backdrop-blur-sm col-span-2 md:col-span-3">
                   <div className="text-gray-400 text-sm mb-1">Moveset</div>
                   <div className="flex flex-wrap gap-2">
-                    {gladiatorMetadata?.moveset?.map(
-                      (move: string, index: number) => (
-                        <span
-                          key={index}
-                          className="text-white text-sm bg-[#2a2c31] px-2 py-1 rounded"
-                        >
-                          {move}
-                        </span>
-                      )
-                    )}
+                    {gladiatorMetadata?.moveset?.map((move: string, index: number) => (
+                      <span key={index} className="text-white text-sm bg-[#2a2c31] px-2 py-1 rounded">
+                        {move}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-12 flex justify-center md:justify-start"></div>
+            <div className="mt-12 flex justify-center md:justify-start">
+            </div>
           </div>
 
           {/* Right content - Hero image */}
           <div className="w-full md:w-1/2 relative">
+
             {/* Main image */}
             <div className="h-full relative py-20">
               <Image
-                src={
-                  gladiatorMetadata?.imageUrl ??
-                  "/placeholder.svg?height=900&width=600"
-                }
+                src={gladiatorMetadata?.imageUrl ?? "/placeholder.svg?height=900&width=600"}
                 width={600}
                 height={500}
                 alt="Deontay Wilder"
@@ -156,5 +139,6 @@ export default function Home() {
         </main>
       </div>
     </div>
-  );
+  )
 }
+

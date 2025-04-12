@@ -16,7 +16,7 @@ const contract = new ethers.Contract(celestialAddress, celestialAbi, wallet);
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json(); // Parse JSON body
-    // console.log("Received Data:", body); // Log the received data
+    console.log("Received Data:", body); // Log the received data
 
     const { name, description, imageUrl, attributes, properties, address } =
       body; // Destructure the data

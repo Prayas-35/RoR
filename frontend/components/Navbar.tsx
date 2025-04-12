@@ -41,7 +41,7 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8 font-serif">
-            <Link
+          <Link
               href="/dashboard"
               className="text-stone-300 hover:text-white transition-colors"
             >
@@ -60,10 +60,10 @@ export default function Navbar() {
               Colosseum
             </Link>
             <Link
-              href="/chronicles"
+              href="/lore"
               className="text-stone-300 hover:text-white transition-colors"
             >
-              Chronicles
+              Lore
             </Link>
             <Link
               href="/about"

@@ -144,13 +144,38 @@ export const handleAbilityActivation = (
     startBattleFn();
   }
 
+  if (
+    gladiatorName === humanGladiator.name &&
+    abilityName === "heal"
+  ) {
+    // Apply healing to the human gladiator
+    const healing = Math.round(humanGladiator.health + (humanGladiator.health * 0.3)); // 30% of base health
+    setHumanHealth(Math.min(100, healing));
+    
+    toast({
+      title: "Healing Applied!",
+      description: `${humanGladiator.name} heals for ${healing > 100 ? 100 : healing} health!`,
+      variant: "default",
+    });
+    
+    // Show healing animation
+    setShowExpAnimation(true);
+
+    // Clear healing animation after a short delay
+    setTimeout(() => {
+      setShowExpAnimation(false);
+    }, 1000);
+
+    return;
+  }
+
   // Apply defensive buffs if the ability is a defensive one
   if (
     gladiatorName === humanGladiator.name &&
     abilityName === "Roman Formation"
   ) {
     // Apply defense buff for the human gladiator
-    const defenseBonus = Math.floor(humanGladiator.defense * 0.3); // 30% of base defense
+    const defenseBonus = Math.round(humanGladiator.defense * 0.3); // 30% of base defense
     setHumanDefenseBonus(defenseBonus);
     setDefenseBonusTurns(2); // Lasts for 2 turns
 
@@ -164,7 +189,7 @@ export const handleAbilityActivation = (
     abilityName === "Data Shield"
   ) {
     // Apply defense buff for the AI gladiator
-    const defenseBonus = Math.floor(aiGladiator.defense * 0.3); // 30% of base defense
+    const defenseBonus = Math.round(aiGladiator.defense * 0.3); // 30% of base defense
     setAiDefenseBonus(defenseBonus);
     setDefenseBonusTurns(2); // Lasts for 2 turns
 
@@ -250,7 +275,7 @@ export const handleAbilityActivation = (
     // Show damage notification
     toast({
       title: "Damage Dealt!",
-      description: `${gladiatorName} deals ${damage} damage to ${aiGladiator.name}!`,
+      description: `${gladiatorName} deals ${Math.round(damage)} damage to ${aiGladiator.name}!`,
       variant: "destructive",
     });
 
@@ -375,7 +400,7 @@ export const handleAbilityActivation = (
     // Show damage notification
     toast({
       title: "Damage Dealt!",
-      description: `${gladiatorName} deals ${damage} damage to ${humanGladiator.name}!`,
+      description: `${gladiatorName} deals ${Math.round(damage)} damage to ${humanGladiator.name}!`,
       variant: "destructive",
     });
 

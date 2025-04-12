@@ -2,13 +2,13 @@ compile:
 	npx hardhat compile
 
 deploy_Celestial:
-	npx hardhat run ignition/modules/celestial.ts --network b3-testnet
+	npx hardhat run ignition/modules/celestial.ts --network eduChain
 
 deploy_Gladiator:
-	npx hardhat run ignition/modules/gladiator.ts --network b3-testnet
+	npx hardhat run ignition/modules/gladiator.ts --network eduChain
 
 verify_Celestial:
-	npx hardhat verify --network b3-testnet 0xE3186d5BfF0Bd7f6aa46089c229c375102157469
+	npx hardhat verify --network eduChain 0x6812362C9c19e76fb3b91e18f83b6BE6D17B7e0c
 
 verify_Gladiator:
-	npx hardhat verify --network b3-testnet 0xeea45F1AD12Ddae628c44F445Df1824184fB429c
+	npx hardhat verify --network eduChain 0x3825b11E1e3230F17ca89301B8A0cC0846FAF3aF

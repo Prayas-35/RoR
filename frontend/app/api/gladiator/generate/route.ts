@@ -1,7 +1,9 @@
-// import { generate } from "@/functions/generate";
+import { generate } from "@/functions/generate";
 import { parseUntilJson } from "@/functions/parseUntilJson";
 import { NextRequest, NextResponse } from "next/server";
-import { generate } from "@/functions/generate";
+import { generateImage as generateImageFunction } from "@/functions/generate";
+import { ethers } from "ethers";
+import { celestialAbi, celestialAddress } from "@/app/abi";
 
 const COLORS = [
   "blue",
@@ -31,10 +33,9 @@ const PERSONALITY_TYPES = [
   "Offensive by nature, always ready to attack and is not afraid to take risks.",
   "Defensive by nature, always ready to defend themselves and is not afraid to take risks.",
 ];
-const BASE_ATTACK = 50;
-const BASE_DEFENCE = 50;
-const BASE_SPEED = 50;
-// const BASE_MOVES = 3;
+const BASE_ATTACK = 60;
+const BASE_DEFENCE = 60;
+const BASE_SPEED = 60;
 const ATTACK_MOVES = ["melee", "ranged"];
 const DEFENCE_MOVES = ["fortify", "heal"];
 const PASSIVE_MOVES = [
@@ -93,26 +94,26 @@ const personalityAttributesGenerator = () => {
   };
 };
 
-// const generateImage = async (characterDescription: string) => {
-//   const prompt = `Create a highly detailed Roman marble sculpture-style illustration of the following gladiator character.
-//     The artwork should resemble an ancient Roman statue with classical proportions and styling:
+const generateImage = async (characterDescription: string) => {
+  const prompt = `Create a highly detailed Roman marble sculpture-style illustration of the following gladiator character. 
+    The artwork should resemble an ancient Roman statue with classical proportions and styling:
 
-//     Character Description: ${characterDescription}
+    Character Description: ${characterDescription}
 
-//     Art Style Requirements:
-//     - Picture should be portrait till the knees
-//     - Gladiator should be wearing a properly covering metal chainlink armor
-//     - Realistic skin texture with subtle veins and skin imperfections
-//     - Classical Roman artistic style with accurate anatomy
-//     - Dramatic lighting as if displayed in a Roman colosseum
-//     - Determined expression with intense gaze and wrath
-//     - Weathered battle-hardenedappearance to show age and battle scars
-//     - Background should be simple and neutral like an ancient Roman gladiator arena
+    Art Style Requirements:
+    - Picture should be portrait till the knees
+    - Gladiator should be wearing a properly covering metal chainlink armor
+    - Realistic skin texture with subtle veins and skin imperfections
+    - Classical Roman artistic style with accurate anatomy
+    - Dramatic lighting as if displayed in a Roman colosseum
+    - Determined expression with intense gaze and wrath
+    - Weathered battle-hardenedappearance to show age and battle scars
+    - Background should be simple and neutral like an ancient Roman gladiator arena
 
-//     The sculpture should capture the character's physical attributes exactly as described while maintaining historical accuracy for ancient Roman gladiator representations.`;
-//   const imageUrl = await generateImageFunction(prompt);
-//   return imageUrl;
-// };
+    The sculpture should capture the character's physical attributes exactly as described while maintaining historical accuracy for ancient Roman gladiator representations.`;
+  const imageUrl = await generateImageFunction(prompt);
+  return imageUrl;
+};
 
 export async function POST(request: NextRequest) {
   let body;
@@ -165,7 +166,7 @@ export async function POST(request: NextRequest) {
   const attackValue = BASE_ATTACK + Math.random() * 10;
   const defenceValue = BASE_DEFENCE + Math.random() * 10;
   const speedValue = BASE_SPEED + Math.random() * 10;
-  // const imageUrl = await generateImage(characterLore.description);
+  const imageUrl = await generateImage(characterLore.description);
 
   return NextResponse.json({
     name,
@@ -176,7 +177,7 @@ export async function POST(request: NextRequest) {
     attackValue: Math.floor(attackValue),
     defenceValue: Math.floor(defenceValue),
     speedValue: Math.floor(speedValue),
-    imageUrl: "",
+    imageUrl,
     success: true,
   });
 }

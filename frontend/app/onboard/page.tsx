@@ -10,77 +10,30 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { config } from "@/lib/config";
-import { generatedGladiatorData } from "@/types/types";
-import { genCelestial } from "@/functions/genCelestial";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
   pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY,
 });
 
-async function generateGladiator({
-  name,
-  gender,
-}: {
-  name: string;
-  gender: string;
-}) {
-  const res = await fetch("/api/gladiator/generate/description", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name, gender }),
-  });
-  const data = await res.json();
-
-  // dividing for better api call
-  const imgRes = await fetch("/api/gladiator/generate/imageGen", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ description: data.description }),
-  });
-  const imageData = await imgRes.json();
-  if (!imageData.success) {
-    throw new Error("Failed to generate image");
-  }
-  data.imageUrl = imageData.imageUrl;
-  data.success = true;
-  console.log("Image generation response:", imageData);
-  console.log("Generated gladiator data:", data);
-  if (!data.success) {
-    throw new Error("Failed to generate gladiator data");
-  }
-  return data;
-}
-
-async function uploadToPinata(data: generatedGladiatorData) {
-  const pinataRes = await pinata.upload.json(data);
-  const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
-  console.log("File uploaded to IPFS:", ipfsUrl);
-  return ipfsUrl;
-}
-
 export default function GladiatorOnboarding() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [isMinting, setIsMinting] = useState(false);
+  const [mintURI, setMintURI] = useState("");
   const [claimed, setClaimed] = useState(false);
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(
     undefined
   );
   const [isLoaded, setIsLoaded] = useState(false);
-  const [celResponse, setCelResponse] = useState<any[]>([]);
 
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  const { refetch: refetchClaimBool } = useReadContract({
+  const { data, refetch: refetchClaimBool } = useReadContract({
     abi: gladiatorAbi,
     address: gladiatorAddress,
     functionName: "hasClaimedNFT",
@@ -108,14 +61,14 @@ export default function GladiatorOnboarding() {
     const interval = setInterval(() => {
       refetchClaimBool()
         .then((result: any) => {
-          // console.log("Claim check result: ", result);
+          console.log("Claim check result: ", result);
           setClaimed(result);
         })
         .catch((error: any) => {
           console.error("Error during claim check: ", error);
           setClaimed(false);
         });
-    }, 15000);
+    }, 5000);
 
     return () => {
       console.log("Clearing refetch interval.\n");
@@ -125,45 +78,48 @@ export default function GladiatorOnboarding() {
 
   async function handleMint() {
     console.log("Minting...");
+    // if (claimed) {
+    //   console.error("Error: Already Claimed.");
+    //   return;
+    // }
 
     setIsMinting(true);
     try {
-      const data = await generateGladiator({
-        name: name,
-        gender: gender,
+      const res = await fetch("/api/gladiator/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, gender }),
       });
+      const data = await res.json();
       console.log("Backend response:", data);
 
-      if (!data.success) {
+      const updateData = {...data, mxp: 0, xp: 0}
+
+      if (!data.success || !updateData) {
         throw new Error("Failed to generate gladiator data");
       }
 
-      const ipfsUrl = await uploadToPinata(data);
+      const pinataRes = await pinata.upload.json(updateData);
+      const ipfsUrl = `https://ipfs.io/ipfs/${pinataRes.IpfsHash}`;
+      console.log("File uploaded to IPFS:", ipfsUrl);
 
-      const celestials = config.celestials;
-      const initialCelestials = celestials
-        .filter((c) => c.tier === 3)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
+      setMintURI(ipfsUrl);
 
-      console.log("Initial Celestials from front:", initialCelestials);
+      const celRes = await fetch("/api/celestial/init", {
+        method: "GET",
+      });
 
-      const celestialResponses = await Promise.all(
-        initialCelestials.map(async (c) => {
-          const celRes = await genCelestial(c);
-          console.log("Celestial response:", celRes);
-          if (!celRes.name || !celRes.description || !celRes.image) {
-            throw new Error("Failed to generate celestial data");
-          }
-          return celRes;
-        })
-      );
+      const celData = await celRes.json();
+      console.log("Initial Gods:", celData);
 
-      setCelResponse(celestialResponses);
+      if (!celData) {
+        throw new Error("Failed to generate intial god data");
+      }
 
       // Mint celestial NFTs sequentially
-      console.log("Minting Celestial NFTs...");
-      for (const god of celestialResponses) {
+      for (const god of celData) {
         const res = await fetch("/api/celestial/mintInit", {
           method: "POST",
           headers: {
@@ -207,10 +163,6 @@ export default function GladiatorOnboarding() {
       setIsMinting(false);
     }
   }
-
-  useEffect(() => {
-    console.log("celResponse", celResponse);
-  }, [celResponse]);
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0b060a]">

@@ -1,8 +1,5 @@
-import { gladiatorAbi } from "@/app/abi";
-import { gladiatorAddress } from "@/app/abi";
 import { Gladiator } from "./types";
 import confetti from "canvas-confetti";
-import { useAccount, useReadContract } from "wagmi";
 import { config } from "../config";
 
 // Random number generator function
@@ -33,21 +30,21 @@ export const calculateDamage = (
   toast: (props: any) => void
 ): number => {
   // Basic formula: attack - defense
-  let damage = attacker.attack - defender.defense;
+  let damage = Math.round(attacker.attack - defender.defense);
 
   // Apply defense bonuses from abilities
   if (defender.name === humanGladiator.name && humanDefenseBonus > 0) {
-    damage = Math.max(1, damage - humanDefenseBonus);
+    damage = Math.max(1, Math.round(damage - humanDefenseBonus));
     toast({
       title: "Defense Bonus Active!",
-      description: `${humanGladiator.name}'s defense bonus reduced damage by ${humanDefenseBonus}!`,
+      description: `${humanGladiator.name}'s defense bonus reduced damage by ${Math.round(humanDefenseBonus)}!`,
       variant: "default",
     });
   } else if (defender.name === aiGladiator.name && aiDefenseBonus > 0) {
-    damage = Math.max(1, damage - aiDefenseBonus);
+    damage = Math.max(1, Math.round(damage - aiDefenseBonus));
     toast({
       title: "Defense Bonus Active!",
-      description: `${aiGladiator.name}'s defense bonus reduced damage by ${aiDefenseBonus}!`,
+      description: `${aiGladiator.name}'s defense bonus reduced damage by ${Math.round(aiDefenseBonus)}!`,
       variant: "default",
     });
   }
@@ -62,7 +59,7 @@ export const calculateDamage = (
     defender.name === humanGladiator.name &&
     humanHealth < humanGladiator.health * 0.3
   ) {
-    damage = Math.floor(damage * 0.7); // 30% damage reduction
+    damage = Math.round(damage * 0.7); // 30% damage reduction
     toast({
       title: "Passive Ability Activated!",
       description: `${humanGladiator.passive.name}: Damage reduced by 30%!`,
@@ -73,7 +70,7 @@ export const calculateDamage = (
   // For AI gladiator passive: Algorithm adaptation
   if (defender.name === aiGladiator.name && battleStarted) {
     // This could increase with each turn, but keeping it simple for now
-    damage = Math.floor(damage * 1.1); // 10% bonus damage
+    damage = Math.round(damage * 1.1); // 10% bonus damage
   }
 
   return damage;
@@ -101,7 +98,7 @@ export const isGladiatorTurn = (
 };
 
 // Function to get placeholder image for gods
-export const getGodPlaceholderImage = (godName: string): string => {
+export const getGodPlaceholderImage = (): string => {
   // Just return a single placeholder for all gods
   return "/god-placeholder.svg";
 };
