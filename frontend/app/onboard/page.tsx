@@ -10,7 +10,6 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { gladiatorAbi, gladiatorAddress } from "../abi";
 import { PinataSDK } from "pinata-web3";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 const pinata = new PinataSDK({
@@ -68,7 +67,7 @@ export default function GladiatorOnboarding() {
           console.error("Error during claim check: ", error);
           setClaimed(false);
         });
-    }, 5000);
+    }, 1000);
 
     return () => {
       console.log("Clearing refetch interval.\n");
@@ -95,7 +94,7 @@ export default function GladiatorOnboarding() {
       const data = await res.json();
       console.log("Backend response:", data);
 
-      const updateData = {...data, mxp: 0, xp: 0}
+      const updateData = { ...data, mxp: 0, xp: 0 }
 
       if (!data.success || !updateData) {
         throw new Error("Failed to generate gladiator data");
@@ -195,9 +194,8 @@ export default function GladiatorOnboarding() {
 
       {/* Content with fade-in animation */}
       <div
-        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${
-          isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
+        className={`relative z-10 w-full max-w-md px-6 py-12 transition-all duration-1000 ease-out ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
       >
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-teal-300 mb-2 tracking-wide animate-pulse-slow">
@@ -323,6 +321,34 @@ export default function GladiatorOnboarding() {
             <p className="text-teal-200/70 text-sm mt-4">
               Your glory awaits behind the veil of the blockchain
             </p>
+          </div>
+        </div>
+      )}
+
+      {claimed && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-stone-900/90 border-2 border-teal-700 rounded-lg p-8 max-w-md text-center animate-scaleIn">
+        <Shield className="h-16 w-16 text-teal-500 mx-auto mb-4 animate-float" />
+        <h2 className="text-3xl font-bold text-teal-300 mb-3">
+          By Jupiter's Thunder!
+        </h2>
+        <p className="text-teal-100 text-lg mb-6">
+          You have already been blessed with a champion. Your gladiator awaits in the arena, thirsting for glory and immortal fame!
+        </p>
+        <div className="flex flex-col items-center gap-4">
+          <Button 
+            onClick={() => router.push('/colosseum')}
+            className="bg-teal-700 hover:bg-teal-600 text-teal-100 py-4 px-8 text-lg font-bold tracking-wider transition-all duration-300 hover:scale-102 hover:shadow-glow animate-pulse-slow"
+          >
+            TO THE COLOSSEUM!
+          </Button>
+          <p className="text-teal-500 text-md italic">
+            "Fortune favors the bold" - Vigil
+          </p>
+        </div>
+        <p className="text-teal-200/70 text-sm mt-6">
+          May Mars guide your blade and Victoria crown your victories
+        </p>
           </div>
         </div>
       )}
