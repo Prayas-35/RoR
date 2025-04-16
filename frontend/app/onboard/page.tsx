@@ -61,7 +61,7 @@ export default function GladiatorOnboarding() {
       refetchClaimBool()
         .then((result: any) => {
           console.log("Claim check result: ", result);
-          setClaimed(result);
+          setClaimed(result.data as boolean);
         })
         .catch((error: any) => {
           console.error("Error during claim check: ", error);

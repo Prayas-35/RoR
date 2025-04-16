@@ -107,7 +107,7 @@ export default function Home() {
 
   if (celestialData) {
     console.log("celestialData", celestialData);
-    godsData = celestialData.map((json: string) => JSON.parse(json));
+    godsData = celestialData[0].map((json: string) => JSON.parse(json));
   }
 
   const [selectedGodIndex, setSelectedGodIndex] = useState(0)

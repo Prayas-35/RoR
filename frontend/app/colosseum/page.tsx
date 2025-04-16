@@ -961,7 +961,7 @@ export default function GladiatorBattle() {
 
   // Dummy functions
   const fetchGods = (): God[] => {
-    const godsData = celestialData.map((json: string) => JSON.parse(json))
+    const godsData = celestialData[0].map((json: string) => JSON.parse(json))
     const godsDataFiltered = godsData.map((god: God) => ({
       ...god,
       attributes: god.attributes.filter((attr: Attribute) => attr.trait_type !== "Type" && attr.trait_type !== "Tier"),

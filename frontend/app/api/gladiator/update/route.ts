@@ -19,8 +19,8 @@ async function postHandler(request: NextRequest) {
     return request.json().then(async (body) => {
         const { gladiatorId, newMetadataUri } = body;
 
-        if (!gladiatorId || !newMetadataUri) {
-            return NextResponse.json({ success: false, error: "Invalid input" });
+        if (!gladiatorId.toString() || !newMetadataUri) {
+            return NextResponse.json({ success: false, error: "Invalid input" }, { status: 400 });
         }
 
         try {
