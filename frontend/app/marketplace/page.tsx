@@ -1,13 +1,7 @@
 import Image from "next/image"
 import {
     Search,
-    Home,
     ShoppingBag,
-    MessageSquare,
-    Grid,
-    Wallet,
-    History,
-    Settings,
     FileText,
     Plus,
     ChevronRight,
@@ -19,7 +13,7 @@ import Navbar from "@/components/Navbar"
 export default function NFTMarketplace() {
     return (
         <>
-        <Navbar />
+            <Navbar />
             <div className="absolute inset-0 -z-10">
                 <div className="absolute inset-0 opacity-30 bg-[url('/fog3.png?height=1080&width=1920')] bg-cover"></div>
                 <div className="absolute inset-0 bg-gradient-radial from-transparent to-[#000000] opacity-80"></div>
@@ -27,42 +21,14 @@ export default function NFTMarketplace() {
             <div className="flex h-[calc(100vh-80px)] mt-20">
                 {/* Sidebar */}
                 <div className="hidden md:flex w-64 flex-col border-r border-[#1a1d25] p-4">
-                    <div className="flex items-center gap-2 mb-8">
-                        <div className="w-8 h-8 rounded-full bg-[#0e84e8] flex items-center justify-center text-white font-bold">
-                            G
-                        </div>
-                        <span className="text-white font-bold text-xl">Gods</span>
+                    <div className="flex items-center gap-2 mb-8 ps-5">
+                        <span className="text-teal-100 font-bold text-xl text-center">Atrium Mercurii</span>
                     </div>
 
                     <nav className="space-y-1 flex-1">
-                        <a href="#" className="flex items-center gap-3 text-[#0e84e8] p-3 rounded-md hover:bg-[#1a1d25]">
-                            <Home size={20} />
-                            <span>Dashboard</span>
-                        </a>
-                        <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
+                        <a href="#" className="flex items-center gap-3 text-teal-100 p-3 rounded-md hover:bg-[#1a1d25]">
                             <ShoppingBag size={20} />
                             <span>Marketplace</span>
-                        </a>
-                        <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
-                            <MessageSquare size={20} />
-                            <span>Messages</span>
-                        </a>
-
-                        <div className="pt-6 pb-2">
-                            <div className="text-xs uppercase text-gray-500 font-semibold px-3">My NFTs</div>
-                        </div>
-
-                        <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
-                            <Grid size={20} />
-                            <span>My Collection</span>
-                        </a>
-                        <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
-                            <Wallet size={20} />
-                            <span>Wallet</span>
-                        </a>
-                        <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
-                            <History size={20} />
-                            <span>History</span>
                         </a>
                         <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
                             <Plus size={20} />
@@ -71,15 +37,6 @@ export default function NFTMarketplace() {
                         <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
                             <FileText size={20} />
                             <span>My Listings</span>
-                        </a>
-
-                        <div className="pt-6 pb-2">
-                            <div className="text-xs uppercase text-gray-500 font-semibold px-3">Account</div>
-                        </div>
-
-                        <a href="#" className="flex items-center gap-3 text-gray-400 p-3 rounded-md hover:bg-[#1a1d25]">
-                            <Settings size={20} />
-                            <span>Settings</span>
                         </a>
                     </nav>
                 </div>
@@ -109,10 +66,7 @@ export default function NFTMarketplace() {
                                     </h1>
                                     <p className="text-gray-400 mb-6">Explore the best digital assets from top creators around the world</p>
                                     <div className="flex flex-wrap gap-3">
-                                        <Button className="bg-[#0e84e8] hover:bg-[#0a6bc0] text-white">Discover Now</Button>
-                                        <Button variant="outline" className="border-[#1a1d25] text-white hover:bg-[#1a1d25]">
-                                            Create your NFT
-                                        </Button>
+                                        <Button className="bg-teal-700 hover:bg-teal-600 hover:shadow-glow animate-pulse-slow text-teal-100 tracking-wider transition-all duration-300 hover:scale-102">Discover Now</Button>
                                     </div>
                                 </div>
                                 <div className="md:w-1/2 relative">
@@ -167,31 +121,6 @@ export default function NFTMarketplace() {
                                 2,345 items
                             </Badge>
                         </div>
-
-                        {/* <Tabs defaultValue="all"> */}
-                        {/* <TabsList className="bg-[#1a1d25] p-1">
-                            <TabsTrigger value="all" className="data-[state=active]:bg-[#0e84e8] data-[state=active]:text-white">
-                                All
-                            </TabsTrigger>
-                            <TabsTrigger value="popular" className="data-[state=active]:bg-[#0e84e8] data-[state=active]:text-white">
-                                Popular
-                            </TabsTrigger>
-                            <TabsTrigger value="art" className="data-[state=active]:bg-[#0e84e8] data-[state=active]:text-white">
-                                Art
-                            </TabsTrigger>
-                            <TabsTrigger value="games" className="data-[state=active]:bg-[#0e84e8] data-[state=active]:text-white">
-                                Games
-                            </TabsTrigger>
-                            <TabsTrigger value="music" className="data-[state=active]:bg-[#0e84e8] data-[state=active]:text-white">
-                                Music
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="photography"
-                                className="data-[state=active]:bg-[#0e84e8] data-[state=active]:text-white"
-                            >
-                                Photography
-                            </TabsTrigger>
-                        </TabsList> */}
 
                         <main className="mt-6">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
