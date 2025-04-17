@@ -14,10 +14,14 @@ async function generate(prompt: string): Promise<string> {
         messages: [{ role: "user", content: prompt }],
     });
     const contentWithThoughts = response.choices[0].message.content;
+    console.log("Content with thoughts:", contentWithThoughts);
     // const contentWithoutThoughts = contentWithThoughts?.replace(/<think>.*?<\/think>/g, "");
-    const contentWithoutThoughts = contentWithThoughts?.split("</think>")[1].trim();
+    const hasThinkTag = contentWithThoughts?.includes("</think>");
+    const contentWithoutThoughts = hasThinkTag 
+        ? contentWithThoughts?.split("</think>")[1]?.trim()
+        : contentWithThoughts;
     console.log("Content without thoughts:", contentWithoutThoughts);
-    return contentWithoutThoughts ?? "";
+    return contentWithoutThoughts || contentWithThoughts || "";
 }
 
 async function generateImage(prompt: string): Promise<string> {
