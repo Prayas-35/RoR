@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 
-const model = process.env.GROQ_MODEL || process.env.NEXT_PUBLIC_GROQ_MODEL || "deepseek-r1-distill-qwen-32b";
+const model = process.env.GROQ_MODEL || process.env.NEXT_PUBLIC_GROQ_MODEL || "deepseek-r1-distill-llama-70b";
 
 const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY || "",

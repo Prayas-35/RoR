@@ -1,5 +1,5 @@
-export const celestialAddress = "0x01577aD97bdf307CD82a3DA2B8862D64E919f43C";
-export const gladiatorAddress = "0x04D8d49e2FfD5DFc9a4e004431c68845bbC21A47";
+export const celestialAddress = "0xDE115676F736F154eEF8398A37e4ACB4d61892e6";
+export const gladiatorAddress = "0x74Ce2e9ef64018a1f7b1A0F035782045d566ef4f";
 
 export const celestialAbi = [
   {
@@ -397,6 +397,31 @@ export const celestialAbi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getAllListings",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "seller",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Celestial.Listing[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -441,6 +466,30 @@ export const celestialAbi = [
         "internalType": "struct Celestial.Listing",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addy",
+        "type": "address"
+      }
+    ],
+    "name": "getListingsForAddress",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "tokenIds",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "prices",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
