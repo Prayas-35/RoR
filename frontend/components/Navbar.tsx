@@ -89,7 +89,7 @@ export default function Navbar() {
 
               <Button
                 variant="ghost"
-                className="text-stone-300  transition-colors p-2"
+                className="text-stone-300 transition-colors p-2"
                 onClick={toggleMusic}
               >
                 {musicPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
