@@ -50,9 +50,6 @@ We tackled challenges like seamless onboarding, gasless NFT minting, and designi
 - [ ] **Screenpipe:** _Screen-based analytics or workflows_  
 - [ ] **Stellar:** _Payments, identity, or token usage_
 *(Mark with ✅ if completed)*
----
-
-Absolutely! Here's a tailored **Key Features** section that captures the essence of your project:
 
 ---
 
