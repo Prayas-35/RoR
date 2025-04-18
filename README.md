@@ -1,46 +1,133 @@
-# Ruins of Rome
+![github-submission-banner](https://github.com/user-attachments/assets/a1493b84-e4e2-456e-a791-ce35ee2bcf2f)
 
-Deployed on B3 Testnet:
+# 🚀 Project Title
 
-`Celestial Contract Address: 0xE3186d5BfF0Bd7f6aa46089c229c375102157469` [Explorer](https://b3-testnet.explorer.caldera.xyz/address/0xE3186d5BfF0Bd7f6aa46089c229c375102157469)
+> Gladiators of the Colosseum: AI Warriors of Rome
 
-`Gladiator Contract Address: 0xeea45F1AD12Ddae628c44F445Df1824184fB429c` [Explorer](https://b3-testnet.explorer.caldera.xyz/address/0xeea45F1AD12Ddae628c44F445Df1824184fB429c)
+---
 
+## 📌 Problem Statement
 
-# ABOUT
+Problem Statement 2 - Unleash Blockchain gameplay with Monad
 
-Step into the grandeur of ancient Rome, where the echoes of the colosseum resound once again. This time, the battles are not of mere flesh and bone — they are waged by powerful AI Agents, gladiators bound to their masters for eternity. Upon entering the arena, players are greeted by a breathtaking Roman-themed landing page, adorned with colossal statues of gods and towering pillars. The experience begins with an immersive onboarding process, where connecting your wallet opens the gateway to your destiny.
+---
 
-Your first task? To name your gladiator and choose its form. Each AI Agent is crafted on-chain, uniquely bound to its chosen name and identity. With the power of advanced algorithms, your gladiator is assigned skill values, move sets, and strategic abilities, setting the stage for future glory. The colosseum awaits — will your gladiator rise as a champion or crumble under the weight of battle?
+## 🎯 Objective
 
-The path to victory is not solely determined by strength and speed. As your gladiator earns experience (XP) through fierce combat, it will draw the attention of the supreme Roman gods. Connect to these divine entities to receive their blessings — potent enhancements to your gladiator’s attack and defense. Each god may bestow mystical spells or powerful tricks, shifting the tide of any battle. Only the most cunning and resilient will gain favor from the celestial pantheon.
+What problem does your project solve, and who does it serve?  
+Briefly describe the real-world use case and the value it provides.
 
-Challenge awaits at every corner. Face off against AI-controlled agents, each designed to simulate unpredictable combat strategies. Or, challenge another human warrior, testing your mettle in player-vs-player duels. Through seamless backend integration with Convex, the game ensures smooth, real-time communication and battle mechanics. Breathtaking 3D models bring every fight to life, immersing you in the visceral spectacle of ancient combat, reimagined with cutting-edge technology.
+---
 
-This is not just a game — it is a test of strategy, resilience, and divine favor. Embrace the spirit of the gladiator. The gods are watching. Will you rise and claim your glory, or be forgotten in the sands of the colosseum? The choice is yours.
+## 🧠 Team & Approach
 
-# Guide to test the game
+### Team Name:  
+N/A
 
-We could not deploy the game to a live link due to certain rate limits on platforms. However, that shouldn't stop you from trying this game out.
+### Team Members:  
+- Arnab Sengupta (GitHub / LinkedIn / Role) 
+*(Add links if you want)*
 
-Follow these steps:
+### Your Approach:  
+- Why you chose this problem  
+- Key challenges you addressed  
+- Any pivots, brainstorms, or breakthroughs during hacking  
 
-1. Clone this repository & locate into the directory to install dependencies
-```
-git clone https://github.com/Prayas-35/RoR
-cd RoR
-npm install --legacy-peer-deps
-```
+---
 
-2. Make a ``` .env.local ``` file
-```
-cp env.example env.local
-```
+## 🛠️ Tech Stack
 
-3. Once your env is ready to go, start your local server:
-```
+### Core Technologies Used:
+- Frontend: Next.js, Tailwind CSS
+- Backend: Next.js
+- Database: MongoDB
+- APIs: GroqSDK
+- Hosting: 
+
+### Sponsor Technologies Used (if any):
+- [✅] **Groq:** _How you used Groq_  
+- [✅] **Monad:** _Your blockchain implementation_  
+- [ ] **Fluvio:** _Real-time data handling_  
+- [ ] **Base:** _AgentKit / OnchainKit / Smart Wallet usage_  
+- [ ] **Screenpipe:** _Screen-based analytics or workflows_  
+- [ ] **Stellar:** _Payments, identity, or token usage_
+*(Mark with ✅ if completed)*
+---
+
+## ✨ Key Features
+
+Highlight the most important features of your project:
+
+- ✅ Feature 1  
+- ✅ Feature 2  
+- ✅ Feature 3  
+- ✅ Feature 4  
+
+Add images, GIFs, or screenshots if helpful!
+
+---
+
+## 📽️ Demo & Deliverables
+
+- **Demo Video Link:** [Paste YouTube or Loom link here]  
+- **Pitch Deck / PPT Link:** [Paste Google Slides / PDF link here]  
+
+---
+
+## ✅ Tasks & Bonus Checklist
+
+- [✅] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
+- [✅] **All members of the team completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  (Details in Participant Manual)
+- [✅] **All members of the team completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  (Details in Participant Manual)
+
+*(Mark with ✅ if completed)*
+
+---
+
+## 🧪 How to Run the Project
+
+### Requirements:
+- Node.js / Python / Docker / etc.
+- API Keys (if any)
+- .env file setup (if needed)
+
+### Local Setup:
+```bash
+# Clone the repo
+git clone https://github.com/your-team/project-name
+
+# Install dependencies
+cd project-name
+npm install
+
+# Start development server
 npm run dev
 ```
 
-Play around the website!
-Thanks.
+Provide any backend/frontend split or environment setup notes here.
+
+---
+
+## 🧬 Future Scope
+
+List improvements, extensions, or follow-up features:
+
+- 📈 More integrations  
+- 🛡️ Security enhancements  
+- 🌐 Localization / broader accessibility  
+
+---
+
+## 📎 Resources / Credits
+
+- APIs or datasets used  
+- Open source libraries or tools referenced  
+- Acknowledgements  
+
+---
+
+## 🏁 Final Words
+
+Share your hackathon journey — challenges, learnings, fun moments, or shout-outs!
+
+---
