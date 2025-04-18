@@ -75,10 +75,6 @@ Absolutely! Here's a tailored **Key Features** section that captures the essence
 
 --- 
 
-Add images, GIFs, or screenshots if helpful!
-
----
-
 ## 📽️ Demo & Deliverables
 
 - **Demo Video Link:** [Paste YouTube or Loom link here]  
