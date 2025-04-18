@@ -330,7 +330,7 @@ export default function GladiatorOnboarding() {
           <div className="bg-stone-900/90 border-2 border-teal-700 rounded-lg p-8 max-w-md text-center animate-scaleIn">
         <Shield className="h-16 w-16 text-teal-500 mx-auto mb-4 animate-float" />
         <h2 className="text-3xl font-bold text-teal-300 mb-3">
-          By Jupiter's Thunder!
+          By Jupiter&apos;s Thunder!
         </h2>
         <p className="text-teal-100 text-lg mb-6">
           You have already been blessed with a champion. Your gladiator awaits in the arena, thirsting for glory and immortal fame!
@@ -343,7 +343,7 @@ export default function GladiatorOnboarding() {
             TO THE COLOSSEUM!
           </Button>
           <p className="text-teal-500 text-md italic">
-            "Fortune favors the bold" - Vigil
+            &quot;Fortune favors the bold&quot; - Vigil
           </p>
         </div>
         <p className="text-teal-200/70 text-sm mt-6">
