@@ -14,24 +14,22 @@ Problem Statement 2 - Unleash Blockchain gameplay with Monad
 
 ## 🎯 Objective
 
-What problem does your project solve, and who does it serve?  
-Briefly describe the real-world use case and the value it provides.
+This project aims to deliver a strategic, AI-driven Web3 gaming experience that blends ancient Roman themes with on-chain asset ownership. By introducing intelligent, evolving gladiators and immersive PvP/PvE mechanics, it addresses the lack of depth and engagement in traditional blockchain games, serving both gamers and NFT collectors seeking meaningful, interactive gameplay.
 
 ---
 
 ## 🧠 Team & Approach
 
 ### Team Name:  
-N/A
+NA
 
 ### Team Members:  
-- Arnab Sengupta (GitHub / LinkedIn / Role) 
-*(Add links if you want)*
+- Arnab Sengupta [GitHub](https://github.com/asengupta07)
 
 ### Your Approach:  
-- Why you chose this problem  
-- Key challenges you addressed  
-- Any pivots, brainstorms, or breakthroughs during hacking  
+We chose this problem to bring depth and strategy to Web3 gaming through AI-driven characters and Roman mythology. Our goal was to move beyond static NFTs and create a living, evolving experience.
+
+We tackled challenges like seamless onboarding, gasless NFT minting, and designing strategic combat mechanics. A key breakthrough was the “Favor of the Gods” system, which turned simple buffs into dynamic, divine interactions that influence battle outcomes.
 
 ---
 
@@ -41,8 +39,8 @@ N/A
 - Frontend: Next.js, Tailwind CSS
 - Backend: Next.js
 - Database: MongoDB
-- APIs: GroqSDK
-- Hosting: 
+- APIs: GroqSDK, Corcel API
+- Hosting: Vercel
 
 ### Sponsor Technologies Used (if any):
 - [✅] **Groq:** _How you used Groq_  
@@ -54,14 +52,28 @@ N/A
 *(Mark with ✅ if completed)*
 ---
 
+Absolutely! Here's a tailored **Key Features** section that captures the essence of your project:
+
+---
+
 ## ✨ Key Features
 
-Highlight the most important features of your project:
+- ✅ **On-Chain AI Gladiators**  
+  Each gladiator is uniquely generated and stored on-chain, with customizable names, skill sets, and evolving strategic abilities.
 
-- ✅ Feature 1  
-- ✅ Feature 2  
-- ✅ Feature 3  
-- ✅ Feature 4  
+- ✅ **Immersive Roman-Themed Experience**  
+  A richly designed landing page and gameplay environment inspired by ancient Rome, complete with colossal architecture and divine lore.
+
+- ✅ **Dynamic PvE and PvP Combat**  
+  Engage in real-time battles against AI agents or other players, powered by intelligent combat mechanics and seamless backend integration.
+
+- ✅ **Divine Favor System**  
+  Earn blessings from Roman gods to enhance abilities, unlock mystical powers, and shift the tide of battle through strategic progression.
+
+- ✅ God NFT Set (Gas-Free)
+  Each player receives 3 powerful God NFTs, representing Roman deities that grant divine boosts in battle. The gas fees for minting these NFTs are covered by us, ensuring a smooth and free onboarding experience.
+
+--- 
 
 Add images, GIFs, or screenshots if helpful!
 
@@ -87,40 +99,62 @@ Add images, GIFs, or screenshots if helpful!
 ## 🧪 How to Run the Project
 
 ### Requirements:
-- Node.js / Python / Docker / etc.
-- API Keys (if any)
-- .env file setup (if needed)
+- Node.js, Python, Solidity, Metamask Wallet
+- API Keys: GroqSDK API, PINATA JWT, PINATA GATEWAY, Corcel API
+- .env file setup:
+
+create a .env.local file in the frontend directory:
+
+```bash
+cd frontend
+code .env.local
+```
+
+then paste and get your keys and put it in the value:
+```
+NEXT_PUBLIC_PINATA_JWT=
+NEXT_PUBLIC_PINATA_GATEWAY=
+# Deployment used by `npx convex dev`
+CONVEX_DEPLOYMENT=
+
+NEXT_PUBLIC_CONVEX_URL=
+
+GROQ_API_KEY=
+CORCEL_API_KEY=
+
+NEXT_PRIVATE_KEY=
+NEXT_RPC=
+
+MONGODB_URI=
+
+GROQ_API_KEY=
+GROQ_MODEL=
+```
 
 ### Local Setup:
 ```bash
 # Clone the repo
-git clone https://github.com/your-team/project-name
-
+git clone https://github.com/asengupta07/RoR
 # Install dependencies
-cd project-name
-npm install
+cd RoR/frontend
+npm install --legacy-peer-deps
 
 # Start development server
 npm run dev
 ```
 
-Provide any backend/frontend split or environment setup notes here.
-
----
-
 ## 🧬 Future Scope
 
 List improvements, extensions, or follow-up features:
 
-- 📈 More integrations  
-- 🛡️ Security enhancements  
-- 🌐 Localization / broader accessibility  
+- 📈 Marketplace to trade god nfts  
+- 🛡️ PvP game mode  
 
 ---
 
 ## 📎 Resources / Credits
 
-- APIs or datasets used  
+- APIs or datasets used : Corcel API, Groq API.  
 - Open source libraries or tools referenced  
 - Acknowledgements  
 
