@@ -150,9 +150,7 @@ List improvements, extensions, or follow-up features:
 
 ## 📎 Resources / Credits
 
-- APIs or datasets used : Corcel API, Groq API.  
-- Open source libraries or tools referenced  
-- Acknowledgements  
+- APIs or datasets used : Corcel API, Groq API. 
 
 ---
 
